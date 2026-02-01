@@ -240,8 +240,12 @@
 
                 <!-- Auto Filters Section -->
                 <div class="section-card" style="background: #334155; border-color: #475569;">
-                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">🎯 Автозаповнення фільтрів</h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; cursor: pointer;" id="autofilters-header">
+                        <h3 style="margin: 0; font-size: 13px; font-weight: 600; color: #f1f5f9;">🎯 Автозаповнення фільтрів</h3>
+                        <span id="autofilters-toggle" style="font-size: 18px; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                    </div>
                     
+                    <div id="autofilters-content">
                     <!-- Основні фільтри -->
                     <div style="margin-bottom: 10px;">
                         <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
@@ -254,11 +258,11 @@
                         <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
                             <span><input type="checkbox" id="filter_limit_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"> Results Limit</span>
                             <select id="filter_limit_value" style="width: 70px; padding: 4px 6px; border: 1px solid #64748b; border-radius: 4px; font-size: 12px; background: #334155; color: #e2e8f0;">
-                                <option value="25">25</option>
+                                <option value="25" selected>25</option>
                                 <option value="50">50</option>
                                 <option value="75">75</option>
                                 <option value="100">100</option>
-                                <option value="200" selected>200</option>
+                                <option value="200">200</option>
                             </select>
                         </label>
                         <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
@@ -307,6 +311,7 @@
                     <button id="btnApplyFilters" style="width: 100%; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; margin-top: 6px;">
                         ⚡ Встановити фільтри
                     </button>
+                    </div>
                 </div>
 
                 <!-- Brands Input (shown only in BRANDS mode) -->
@@ -541,6 +546,34 @@
                 }
             });
         }
+
+        // Toggle для згортання/розгортання секції автофільтрів
+        const autofiltersHeader = document.getElementById('autofilters-header');
+        const autofiltersContent = document.getElementById('autofilters-content');
+        const autofiltersToggle = document.getElementById('autofilters-toggle');
+        
+        // Завантаження стану (згорнуто чи ні) з localStorage
+        const autofiltersCollapsed = localStorage.getItem('domain-grabber-autofilters-collapsed') === 'true';
+        if (autofiltersCollapsed) {
+            autofiltersContent.style.display = 'none';
+            autofiltersToggle.style.transform = 'rotate(-90deg)';
+            autofiltersToggle.textContent = '▶';
+        }
+        
+        autofiltersHeader?.addEventListener('click', () => {
+            const isCollapsed = autofiltersContent.style.display === 'none';
+            if (isCollapsed) {
+                autofiltersContent.style.display = 'block';
+                autofiltersToggle.style.transform = 'rotate(0deg)';
+                autofiltersToggle.textContent = '▼';
+                localStorage.setItem('domain-grabber-autofilters-collapsed', 'false');
+            } else {
+                autofiltersContent.style.display = 'none';
+                autofiltersToggle.style.transform = 'rotate(-90deg)';
+                autofiltersToggle.textContent = '▶';
+                localStorage.setItem('domain-grabber-autofilters-collapsed', 'true');
+            }
+        });
 
         // КНОПКА ВСТАНОВИТИ ФІЛЬТРИ
         const btnApplyFilters = document.getElementById('btnApplyFilters');
@@ -945,7 +978,7 @@
                 acr_value: '1',
                 available_enable: true,
                 limit_enable: true,
-                limit_value: '200',
+                limit_value: '25',
                 exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
@@ -966,7 +999,7 @@
                 acr_value: '1',
                 available_enable: true,
                 limit_enable: true,
-                limit_value: '200',
+                limit_value: '25',
                 exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
@@ -984,7 +1017,7 @@
             acr_value: document.getElementById('filter_acr_value')?.value || '1',
             available_enable: document.getElementById('filter_available_enable')?.checked || false,
             limit_enable: document.getElementById('filter_limit_enable')?.checked || false,
-            limit_value: document.getElementById('filter_limit_value')?.value || '200',
+            limit_value: document.getElementById('filter_limit_value')?.value || '25',
             exclude_makeoffer_enable: document.getElementById('filter_exclude_makeoffer_enable')?.checked || false,
             period: document.getElementById('filter_period')?.value || '',
             contains_enable: document.getElementById('filter_contains_enable')?.checked || false,
