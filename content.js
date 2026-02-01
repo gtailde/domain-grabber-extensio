@@ -266,7 +266,7 @@
                             </select>
                         </label>
                         <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
-                            <input type="checkbox" id="filter_exclude_makeoffer_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
+                            <input type="checkbox" id="filter_exclude_makeoffer_enable" style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
                             <span>🚫 Exclude Make Offer</span>
                         </label>
                     </div>
@@ -979,7 +979,7 @@
                 available_enable: true,
                 limit_enable: true,
                 limit_value: '25',
-                exclude_makeoffer_enable: true,
+                exclude_makeoffer_enable: false,
                 period: 'flast168',
                 contains_enable: false,
                 contains_list: GAMBLING_WORDS.join(' '),
@@ -1000,7 +1000,7 @@
                 available_enable: true,
                 limit_enable: true,
                 limit_value: '25',
-                exclude_makeoffer_enable: true,
+                exclude_makeoffer_enable: false,
                 period: 'flast168',
                 contains_enable: false,
                 contains_list: GAMBLING_WORDS.join(' '),
