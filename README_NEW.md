@@ -2,7 +2,7 @@
 
 **Професійне розширення для автоматизованого збору доменів та метрик з ExpiredDomains.net**
 
-![Version](https://img.shields.io/badge/version-3.7.2-blue)
+![Version](https://img.shields.io/badge/version-3.7.3-blue)
 ![Manifest](https://img.shields.io/badge/manifest-v3-green)
 ![Chrome](https://img.shields.io/badge/chrome-extension-yellow)
 

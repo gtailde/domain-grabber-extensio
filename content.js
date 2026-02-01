@@ -1155,27 +1155,47 @@
         const allPeriods = ['flast12', 'flast24', 'flast48', 'flast168', 'flast14d', 'flast30d', 'flast60d', 'flast90d', 'flast120d', 'flast365d'];
         
         if (settings.period && settings.period !== '') {
-            // Спочатку знімаємо всі періоди
-            for (const p of allPeriods) {
-                const el = document.getElementById(p);
-                if (el && el.checked) {
-                    setValue(el, false, 'click');
-                    await delay(100);
+            // Перевіряємо чи вже правильно встановлено
+            const targetPeriod = document.getElementById(settings.period);
+            const isAlreadySet = targetPeriod && targetPeriod.checked && 
+                                 allPeriods.filter(p => p !== settings.period)
+                                          .every(p => {
+                                              const el = document.getElementById(p);
+                                              return !el || !el.checked;
+                                          });
+            
+            if (!isAlreadySet) {
+                // Тільки якщо не встановлено правильно - міняємо
+                // Спочатку знімаємо інші періоди
+                for (const p of allPeriods) {
+                    if (p !== settings.period) {
+                        const el = document.getElementById(p);
+                        if (el && el.checked) {
+                            setValue(el, false, 'click');
+                            await delay(100);
+                        }
+                    }
+                }
+                // Встановлюємо потрібний
+                if (targetPeriod && !targetPeriod.checked) {
+                    setValue(targetPeriod, true, 'click');
+                    await delay(50 + Math.random() * 100);
                 }
             }
-            // Встановлюємо потрібний
-            const periodEl = document.getElementById(settings.period);
-            if (periodEl) {
-                setValue(periodEl, true, 'click');
-                await delay(50 + Math.random() * 100);
-            }
         } else {
-            // Якщо період не встановлено - знімаємо всі чекбокси
-            for (const p of allPeriods) {
+            // Якщо період не встановлено - знімаємо всі чекбокси (тільки якщо є встановлені)
+            const hasChecked = allPeriods.some(p => {
                 const el = document.getElementById(p);
-                if (el && el.checked) {
-                    setValue(el, false, 'click');
-                    await delay(100);
+                return el && el.checked;
+            });
+            
+            if (hasChecked) {
+                for (const p of allPeriods) {
+                    const el = document.getElementById(p);
+                    if (el && el.checked) {
+                        setValue(el, false, 'click');
+                        await delay(100);
+                    }
                 }
             }
         }
