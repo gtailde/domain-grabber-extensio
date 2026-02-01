@@ -2,7 +2,7 @@
 
 **Професійне розширення для автоматизованого збору доменів та метрик з ExpiredDomains.net**
 
-![Version](https://img.shields.io/badge/version-3.7.4-blue)
+![Version](https://img.shields.io/badge/version-3.7.6-blue)
 ![Manifest](https://img.shields.io/badge/manifest-v3-green)
 ![Chrome](https://img.shields.io/badge/chrome-extension-yellow)
 
@@ -187,6 +187,20 @@ cd domain-grabber-extensio
 {"domain": "test.com", "bl": "30", "acr": "150", "cf": "18", "tf": "25", "dp": "12", "brand": "DROP"}
 {"domain": "demo.net", "bl": "20", "acr": "80", "cf": "12", "tf": "15", "dp": "8", "brand": "demo"}
 ```
+
+### Формат Excel (для таблиць)
+
+**БЕЗ заголовків** - тільки дані, розділені табуляцією:
+
+**Послідовність колонок:** `Brand → Domain → BL → ACR → CF → TF → DP`
+
+```
+DROP	example.com	25	100	15	20	10
+DROP	test.com	30	150	18	25	12
+DROP	demo.net	20	80	12	15	8
+```
+
+Просто скопіюйте і вставте в Excel/Google Sheets - дані автоматично розподіляться по колонках.
 
 ### Режим BRANDS
 

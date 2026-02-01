@@ -846,14 +846,8 @@
                         const jsonLines = data.map(d => JSON.stringify(d)).join('\n');
                         copyToClipboard(jsonLines, `✅ JSON скопійовано!\n\nЗнайдено доменів: ${data.length}`);
                     } else {
-                        // Формуємо TSV з вибраними метриками
-                        const headers = ['Brand', 'Domain'];
-                        if (data[0]?.bl !== undefined) headers.push('BL');
-                        if (data[0]?.acr !== undefined) headers.push('ACR');
-                        if (data[0]?.cf !== undefined) headers.push('CF');
-                        if (data[0]?.tf !== undefined) headers.push('TF');
-                        if (data[0]?.dp !== undefined) headers.push('DP');
-                        
+                        // Excel формат БЕЗ заголовків - тільки дані
+                        // Послідовність: Brand → Domain → BL → ACR → CF → TF → DP
                         const rows = data.map(d => {
                             const row = [d.brand, d.domain];
                             if (d.bl !== undefined) row.push(d.bl);
@@ -864,8 +858,8 @@
                             return row.join('\t');
                         });
                         
-                        const tsv = headers.join('\t') + '\n' + rows.join('\n');
-                        copyToClipboard(tsv, `✅ Excel дані скопійовано!\n\nЗнайдено доменів: ${data.length}`);
+                        const tsv = rows.join('\n');
+                        copyToClipboard(tsv, `✅ Excel дані скопійовано!\n\nЗнайдено доменів: ${data.length}\n\nПослідовність: Brand→Domain→BL→ACR→CF→TF→DP`);
                     }
                 } else {
                     showNotification('❌ Домени не знайдені!\n\nПеревірте фільтри та спробуйте ще раз', 'error');
