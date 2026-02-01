@@ -54,11 +54,6 @@
         });
         
         document.body.appendChild(launchBtn);
-
-        // Перевірка: чи ми зараз на сторінці менеджера колонок?
-        if (window.location.href.includes("account/columnmanager")) {
-            autoSetupColumns();
-        }
     }
 
     function showMainUI() {
