@@ -266,7 +266,7 @@
                             </select>
                         </label>
                         <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
-                            <input type="checkbox" id="filter_exclude_makeoffer_enable" style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
+                            <input type="checkbox" id="filter_exclude_makeoffer_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
                             <span>🚫 Exclude Make Offer</span>
                         </label>
                     </div>
@@ -310,6 +310,11 @@
                     <!-- Кнопка застосувати -->
                     <button id="btnApplyFilters" style="width: 100%; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; margin-top: 6px;">
                         ⚡ Встановити фільтри
+                    </button>
+                    
+                    <!-- Кнопка скидання налаштувань -->
+                    <button id="btnResetFilters" style="width: 100%; padding: 8px; background: #475569; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 11px; transition: all 0.2s ease; margin-top: 6px;">
+                        🔄 Скинути налаштування
                     </button>
                     </div>
                 </div>
@@ -635,6 +640,41 @@
             
             // Оновлюємо лічильники
             updateFilterCounts();
+        }
+
+        // КНОПКА СКИНУТИ НАЛАШТУВАННЯ
+        const btnResetFilters = document.getElementById('btnResetFilters');
+        if (btnResetFilters) {
+            btnResetFilters.addEventListener('click', () => {
+                if (confirm('Ви впевнені, що хочете скинути всі налаштування фільтрів до дефолтних значень?')) {
+                    // Очищуємо збережені налаштування
+                    localStorage.removeItem('domain-grabber-filters');
+                    
+                    // Завантажуємо дефолтні значення
+                    const defaults = loadFilterSettings();
+                    
+                    // Відновлюємо UI
+                    document.getElementById('filter_acr_enable').checked = defaults.acr_enable;
+                    document.getElementById('filter_acr_value').value = defaults.acr_value;
+                    document.getElementById('filter_available_enable').checked = defaults.available_enable;
+                    document.getElementById('filter_limit_enable').checked = defaults.limit_enable;
+                    document.getElementById('filter_limit_value').value = defaults.limit_value;
+                    document.getElementById('filter_exclude_makeoffer_enable').checked = defaults.exclude_makeoffer_enable;
+                    document.getElementById('filter_period').value = defaults.period;
+                    document.getElementById('filter_contains_enable').checked = defaults.contains_enable;
+                    document.getElementById('filter_contains_list').value = defaults.contains_list;
+                    document.getElementById('filter_blackzone_enable').checked = defaults.blackzone_enable;
+                    document.getElementById('filter_blackzone_list').value = defaults.blackzone_list;
+                    
+                    // Оновлюємо лічильники
+                    updateFilterCounts();
+                    
+                    // Зберігаємо дефолтні значення
+                    saveFilterSettings();
+                    
+                    showNotification('✅ Налаштування скинуто до дефолтних значень!', 'success');
+                }
+            });
         }
 
         const btnProcess = document.getElementById('btnProcess');
@@ -979,7 +1019,7 @@
                 available_enable: true,
                 limit_enable: true,
                 limit_value: '25',
-                exclude_makeoffer_enable: false,
+                exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
                 contains_list: GAMBLING_WORDS.join(' '),
@@ -1000,7 +1040,7 @@
                 available_enable: true,
                 limit_enable: true,
                 limit_value: '25',
-                exclude_makeoffer_enable: false,
+                exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
                 contains_list: GAMBLING_WORDS.join(' '),
