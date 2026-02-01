@@ -1108,39 +1108,47 @@
         };
 
         // ACR
-        if (settings.acr_enable) {
-            const facr = document.getElementById('facr');
-            if (facr) {
-                setValue(facr, settings.acr_value);
-                await delay(50 + Math.random() * 100);
-            }
+        const facr = document.getElementById('facr');
+        if (settings.acr_enable && facr) {
+            setValue(facr, settings.acr_value);
+            await delay(50 + Math.random() * 100);
+        } else if (!settings.acr_enable && facr) {
+            // Очищуємо якщо відключено
+            setValue(facr, '');
+            await delay(50 + Math.random() * 100);
         }
 
         // Limit
-        if (settings.limit_enable) {
-            const flimit = document.getElementById('flimit');
-            if (flimit) {
-                setValue(flimit, settings.limit_value);
-                await delay(50 + Math.random() * 100);
-            }
+        const flimit = document.getElementById('flimit');
+        if (settings.limit_enable && flimit) {
+            setValue(flimit, settings.limit_value);
+            await delay(50 + Math.random() * 100);
+        } else if (!settings.limit_enable && flimit) {
+            // Повертаємо до дефолту
+            setValue(flimit, '25');
+            await delay(50 + Math.random() * 100);
         }
 
         // Available
-        if (settings.available_enable) {
-            const fwhois = document.getElementById('fwhois');
-            if (fwhois) {
-                setValue(fwhois, true, 'click');
-                await delay(50 + Math.random() * 100);
-            }
+        const fwhois = document.getElementById('fwhois');
+        if (settings.available_enable && fwhois) {
+            setValue(fwhois, true, 'click');
+            await delay(50 + Math.random() * 100);
+        } else if (!settings.available_enable && fwhois && fwhois.checked) {
+            // Знімаємо якщо відключено
+            setValue(fwhois, false, 'click');
+            await delay(50 + Math.random() * 100);
         }
 
         // Exclude Make Offer
-        if (settings.exclude_makeoffer_enable) {
-            const fexclude = document.getElementById('fexcludemakeoffer');
-            if (fexclude) {
-                setValue(fexclude, true, 'click');
-                await delay(50 + Math.random() * 100);
-            }
+        const fexclude = document.getElementById('fexcludemakeoffer');
+        if (settings.exclude_makeoffer_enable && fexclude) {
+            setValue(fexclude, true, 'click');
+            await delay(50 + Math.random() * 100);
+        } else if (!settings.exclude_makeoffer_enable && fexclude && fexclude.checked) {
+            // Знімаємо якщо відключено
+            setValue(fexclude, false, 'click');
+            await delay(50 + Math.random() * 100);
         }
 
         // Період
@@ -1163,24 +1171,29 @@
         }
 
         // Contains (gambling)
-        if (settings.contains_enable && settings.contains_list) {
-            const fdomain = document.querySelector('input[name="fdomain"]');
-            if (fdomain) {
-                const words = settings.contains_list.split(/[\s\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
-                const shuffled = shuffleArray(words);
-                setValue(fdomain, shuffled.join(' '));
-                await delay(50 + Math.random() * 100);
-            }
+        const fdomain = document.querySelector('input[name="fdomain"]');
+        if (settings.contains_enable && settings.contains_list && fdomain) {
+            const words = settings.contains_list.split(/[\s\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
+            const shuffled = shuffleArray(words);
+            setValue(fdomain, shuffled.join(' '));
+            await delay(50 + Math.random() * 100);
+        } else if (!settings.contains_enable && fdomain) {
+            // Очищуємо якщо відключено
+            setValue(fdomain, '');
+            await delay(50 + Math.random() * 100);
         }
 
         // Black zones
-        if (settings.blackzone_enable && settings.blackzone_list) {
-            const ftldsblock = document.querySelector('input[name="ftldsblock"]');
-            if (ftldsblock) {
-                const zones = settings.blackzone_list.split(/[\s\n,]+/).map(z => z.trim()).filter(z => z.length > 0);
-                const shuffled = shuffleArray(zones);
-                setValue(ftldsblock, shuffled.join(' '));
-            }
+        const ftldsblock = document.querySelector('input[name="ftldsblock"]');
+        if (settings.blackzone_enable && settings.blackzone_list && ftldsblock) {
+            const zones = settings.blackzone_list.split(/[\s\n,]+/).map(z => z.trim()).filter(z => z.length > 0);
+            const shuffled = shuffleArray(zones);
+            setValue(ftldsblock, shuffled.join(' '));
+            await delay(50 + Math.random() * 100);
+        } else if (!settings.blackzone_enable && ftldsblock) {
+            // Очищуємо якщо відключено
+            setValue(ftldsblock, '');
+            await delay(50 + Math.random() * 100);
         }
     }
 
