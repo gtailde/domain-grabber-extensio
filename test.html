@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Domain Grabber Pro - Extension</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-size: 42px;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-table th, .test-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .test-table th {
+            background: #229e94;
+            color: white;
+            font-weight: 600;
+        }
+        .test-table tr:hover {
+            background: #f9f9f9;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .available {
+            background: #d4edda;
+            color: #155724;
+        }
+        .unavailable {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Domain Grabber Pro - Test Page</h1>
+    
+    <div class="instructions">
+        <h3>📋 Інструкції для тестування:</h3>
+        <ol>
+            <li>Переконайтеся, що розширення завантажене в Chrome</li>
+            <li>Шукайте кнопку <strong>🚀 Grab</strong> в лівому нижньому куті</li>
+            <li>Натисніть на неї, щоб відкрити панель управління</li>
+            <li>Виберіть потрібні метрики (BL, ACR, CF, TF, DP)</li>
+            <li>Введіть бренди: <code>nike adidas puma</code></li>
+            <li>Натисніть <strong>ЗІБРАТИ ДАНІ</strong></li>
+        </ol>
+    </div>
+
+    <div class="info-box">
+        <h2>Тестові домени</h2>
+        <p>Ця сторінка містить тестову таблицю з доменами для перевірки роботи розширення.</p>
+        <p><strong>Нові можливості v3.0:</strong></p>
+        <ul>
+            <li>✨ Крутіший дизайн з градієнтами і анімаціями</li>
+            <li>📊 Вибір метрик для збору (BL, ACR, CF, TF, DP)</li>
+            <li>🔗 Окремі кнопки: "Перейти" і "Застосувати конфігурацію"</li>
+            <li>💾 Юзер сам зберігає налаштування (без автоматичних редіректів)</li>
+            <li>🔄 Два режими: BRANDS (групування) і DROP</li>
+            <li>🎯 Перетягування панелі мишкою</li>
+            <li>⚡ Спіннер замість alert при застосуванні конфігурації</li>
+            <li>🖱️ Клік по всьому блоку метрики (не тільки чекбокс)</li>
+        </ul>
+    </div>
+
+    <table class="test-table">
+        <thead>
+            <tr>
+                <th>Domain</th>
+                <th class="field_whois">Status</th>
+                <th class="field_bl">BL</th>
+                <th class="field_aentries">ACR</th>
+                <th class="field_majesticseo_cf">CF</th>
+                <th class="field_majesticseo_tf">TF</th>
+                <th class="field_domainpop">DP</th>
+                <th class="field_adddate">Add Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="field_domain"><a href="#" class="namelinks">nikeshoes2024.com</a></td>
+                <td class="field_whois"><a href="#" class="whoislinks">Available</a></td>
+                <td class="field_bl">150</td>
+                <td class="field_aentries">850</td>
+                <td class="field_majesticseo_cf">25</td>
+                <td class="field_majesticseo_tf">18</td>
+                <td class="field_domainpop">320</td>
+                <td class="field_adddate">2023-01-15</td>
+            </tr>
+            <tr>
+                <td class="field_domain"><a href="#" class="namelinks">adidas-store.net</a></td>
+                <td class="field_whois"><a href="#" class="whoislinks">Available</a></td>
+                <td class="field_bl">200</td>
+                <td class="field_aentries">1200</td>
+                <td class="field_majesticseo_cf">30</td>
+                <td class="field_majesticseo_tf">22</td>
+                <td class="field_domainpop">450</td>
+                <td class="field_adddate">2022-06-20</td>
+            </tr>
+            <tr>
+                <td class="field_domain"><a href="#" class="namelinks">pumaoriginal.org</a></td>
+                <td class="field_whois"><a href="#" class="whoislinks">Available</a></td>
+                <td class="field_bl">180</td>
+                <td class="field_aentries">950</td>
+                <td class="field_majesticseo_cf">28</td>
+                <td class="field_majesticseo_tf">20</td>
+                <td class="field_domainpop">380</td>
+                <td class="field_adddate">2023-03-10</td>
+            </tr>
+            <tr>
+                <td class="field_domain"><a href="#" class="namelinks">reebokgear.com</a></td>
+                <td class="field_whois"><a href="#" class="whoislinks">Registered</a></td>
+                <td class="field_bl">120</td>
+                <td class="field_aentries">650</td>
+                <td class="field_majesticseo_cf">20</td>
+                <td class="field_majesticseo_tf">15</td>
+                <td class="field_domainpop">250</td>
+                <td class="field_adddate">2021-11-05</td>
+            </tr>
+            <tr>
+                <td class="field_domain"><a href="#" class="namelinks">nikepro2025.com</a></td>
+                <td class="field_whois"><a href="#" class="whoislinks">Available</a></td>
+                <td class="field_bl">165</td>
+                <td class="field_aentries">920</td>
+                <td class="field_majesticseo_cf">26</td>
+                <td class="field_majesticseo_tf">19</td>
+                <td class="field_domainpop">340</td>
+                <td class="field_adddate">2023-08-22</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="info-box" style="margin-top: 20px;">
+        <h3>✅ Що перевірити:</h3>
+        <ul>
+            <li>Кнопка 🚀 Grab з'являється в лівому нижньому куті</li>
+            <li>При натисканні відкривається панель управління з новим дизайном справа вгорі</li>
+            <li>Можна вибирати які метрики збирати (клік по всьому блоку працює)</li>
+            <li>Є 2 кнопки: "Перейти в Column Manager" і "Застосувати конфігурацію"</li>
+            <li>Застосування конфігурації показує спіннер (не alert)</li>
+            <li>Після введення брендів (nike, adidas, puma) знаходить відповідні домени</li>
+            <li>В режимі DROP всі домени мають brand = "DROP"</li>
+            <li>В режимі BRANDS домени без збігу мають пустий brand</li>
+            <li>Фільтр "Рік додавання" замість "Рік реєстрації" (дефолт 2020)</li>
+            <li>Експорт JSON і Excel містить тільки вибрані метрики</li>
+            <li>Панель можна перетягувати мишкою за заголовок</li>
+        </ul>
+    </div>
+</body>
+</html>

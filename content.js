@@ -1,0 +1,831 @@
+(function() {
+    // === КОНФІГУРАЦІЯ ===
+    const COLUMN_MANAGER_URL = "https://member.expireddomains.net/account/columnmanager/";
+
+    // Чекаємо завантаження DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    function init() {
+        // Перевірка: показуємо кнопку тільки на expireddomains.net
+        if (!window.location.href.includes('expireddomains.net')) {
+            return;
+        }
+        
+        // Створюємо кнопку запуску (тільки на expireddomains.net)
+        const launchBtn = document.createElement('button');
+        launchBtn.innerText = '🚀 Grab';
+        launchBtn.id = 'domain-grabber-launch-btn';
+        Object.assign(launchBtn.style, {
+            position: 'fixed', bottom: '20px', left: '20px', zIndex: '100000',
+            padding: '14px 24px', fontSize: '16px', background: 'linear-gradient(135deg, #229e94 0%, #1a7d75 100%)', 
+            color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer', 
+            fontWeight: 'bold', boxShadow: '0 6px 20px rgba(34, 158, 148, 0.4)',
+            transition: 'all 0.3s ease', fontFamily: 'Segoe UI, sans-serif'
+        });
+        
+        // Click handler
+        launchBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            showMainUI();
+        });
+        
+        // Перевіряємо чи панель була відкрита раніше
+        const wasPanelOpen = localStorage.getItem('domain-grabber-panel-open') === 'true';
+        if (wasPanelOpen) {
+            showMainUI();
+        }
+        
+        // Hover effect
+        launchBtn.addEventListener('mouseenter', () => {
+            Object.assign(launchBtn.style, {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 8px 25px rgba(34, 158, 148, 0.5)'
+            });
+        });
+        launchBtn.addEventListener('mouseleave', () => {
+            Object.assign(launchBtn.style, {
+                transform: 'translateY(0)',
+                boxShadow: '0 6px 20px rgba(34, 158, 148, 0.4)'
+            });
+        });
+        
+        document.body.appendChild(launchBtn);
+
+        // Перевірка: чи ми зараз на сторінці менеджера колонок?
+        if (window.location.href.includes("account/columnmanager")) {
+            autoSetupColumns();
+        }
+    }
+
+    function showMainUI() {
+        const old = document.getElementById('grabber-ui');
+        if (old) { 
+            old.remove(); 
+            localStorage.setItem('domain-grabber-panel-open', 'false');
+            return; 
+        }
+        
+        // Зберігаємо що панель відкрита
+        localStorage.setItem('domain-grabber-panel-open', 'true');
+
+        const ui = document.createElement('div');
+        ui.id = 'grabber-ui';
+        Object.assign(ui.style, {
+            position: 'fixed', 
+            top: '20px', 
+            right: '20px', 
+            zIndex: '100001', 
+            background: '#1e293b',
+            padding: '0', 
+            borderRadius: '12px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', 
+            fontFamily: 'system-ui, -apple-system, sans-serif', 
+            width: '480px',
+            animation: 'slideInRight 0.3s ease-out',
+            cursor: 'move'
+        });
+
+        ui.innerHTML = `
+            <style>
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                }
+                .grabber-content {
+                    background: #1e293b;
+                    padding: 24px;
+                    border-radius: 12px;
+                    cursor: default;
+                }
+                .grabber-header {
+                    cursor: move;
+                    user-select: none;
+                }
+                .section-card {
+                    background: #334155;
+                    padding: 14px;
+                    border-radius: 8px;
+                    margin-bottom: 14px;
+                    border: 1px solid #475569;
+                }
+                .metric-checkbox {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 12px;
+                    background: #475569;
+                    border-radius: 6px;
+                    margin-bottom: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    border: 1px solid #64748b;
+                    user-select: none;
+                }
+                .metric-checkbox:hover {
+                    border-color: #3b82f6;
+                    background: #4b5563;
+                    transform: translateX(2px);
+                }
+                .metric-checkbox input {
+                    margin-right: 10px;
+                    width: 18px;
+                    height: 18px;
+                    cursor: pointer;
+                    accent-color: #3b82f6;
+                }
+                .metric-checkbox label {
+                    cursor: pointer;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #e2e8f0;
+                    flex: 1;
+                }
+                .mode-switch {
+                    display: flex;
+                    background: #334155;
+                    border-radius: 8px;
+                    padding: 3px;
+                    gap: 3px;
+                    margin-bottom: 12px;
+                    border: 1px solid #475569;
+                }
+                .mode-switch button {
+                    flex: 1;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 13px;
+                    transition: all 0.2s ease;
+                    background: transparent;
+                    color: #94a3b8;
+                }
+                .mode-switch button.active {
+                    background: #3b82f6;
+                    color: white;
+                    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+                }
+                .spinner-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    z-index: 100002;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                }
+                .spinner {
+                    width: 60px;
+                    height: 60px;
+                    border: 5px solid rgba(255, 255, 255, 0.3);
+                    border-top: 5px solid white;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                .spinner-text {
+                    color: white;
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin-top: 20px;
+                    text-align: center;
+                }
+            </style>
+            <div class="grabber-content">
+                <div class="grabber-header">
+                    <h2 style="margin: 0 0 16px; color: #f1f5f9; text-align: center; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;">
+                        <span style="color: #3b82f6;">⚡</span> Domain Grabber
+                    </h2>
+                </div>
+                
+                <!-- Mode Switch -->
+                <div class="mode-switch">
+                    <button id="modeBrands" class="active">🏷️ BRANDS</button>
+                    <button id="modeDrop">💧 DROP</button>
+                </div>
+                
+                <!-- Column Manager Section -->
+                <div class="section-card" style="background: #475569; border-color: #64748b;">
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">⚙️ Колонки</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="btnGoToSetup" style="flex: 1; padding: 10px; background: #64748b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease;">
+                            🔗 Перейти
+                        </button>
+                        <button id="btnApplyConfig" style="flex: 1; padding: 10px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease;">
+                            ✨ Застосувати
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Brands Input (shown only in BRANDS mode) -->
+                <div id="brandsSection" style="margin-bottom: 14px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #f1f5f9; font-size: 13px;">
+                        🏷️ Бренди:
+                    </label>
+                    <textarea id="brandInput" style="width: 100%; height: 70px; border: 1px solid #64748b; border-radius: 6px; padding: 10px; font-size: 13px; font-family: 'Segoe UI', sans-serif; transition: all 0.2s ease; resize: vertical; background: #334155; color: #e2e8f0; box-sizing: border-box;" placeholder="nike adidas puma..."></textarea>
+                </div>
+
+                <!-- Metrics Selection -->
+                <div class="section-card">
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">📊 Метрики:</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div class="metric-checkbox">
+                            <input type="checkbox" id="metric_bl" checked>
+                            <label for="metric_bl">BL</label>
+                        </div>
+                        <div class="metric-checkbox">
+                            <input type="checkbox" id="metric_acr" checked>
+                            <label for="metric_acr">ACR</label>
+                        </div>
+                        <div class="metric-checkbox">
+                            <input type="checkbox" id="metric_cf" checked>
+                            <label for="metric_cf">CF</label>
+                        </div>
+                        <div class="metric-checkbox">
+                            <input type="checkbox" id="metric_tf" checked>
+                            <label for="metric_tf">TF</label>
+                        </div>
+                        <div class="metric-checkbox">
+                            <input type="checkbox" id="metric_dp" checked>
+                            <label for="metric_dp">DP</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="section-card">
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">🔍 Фільтри:</h3>
+                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 13px; color: #e2e8f0; margin-bottom: 10px; padding: 8px 10px; background: #475569; border-radius: 6px;">
+                        <input type="checkbox" id="onlyAvailable" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;"> 
+                        <span style="font-weight: 500;">✅ Тільки Available</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #475569; border-radius: 6px;">
+                        <label style="display: flex; align-items: center; cursor: pointer; font-size: 13px; color: #e2e8f0;">
+                            <input type="checkbox" id="useYearFilter" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;"> 
+                            <span style="font-weight: 500;">📅 Рік >=</span>
+                        </label>
+                        <input type="number" id="yearValue" value="2020" style="width: 70px; padding: 6px 10px; border: 1px solid #64748b; border-radius: 6px; font-size: 13px; font-weight: 600; text-align: center; background: #334155; color: #e2e8f0;">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 10px; margin-top: 14px;">
+                    <button id="btnProcess" style="flex: 1; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s ease; letter-spacing: 0.3px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+                        🎯 ЗІБРАТИ
+                    </button>
+                    <button id="btnCloseUI" style="padding: 14px 18px; background: #475569; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; font-weight: 600;">
+                        ✖️
+                    </button>
+                </div>
+
+                <!-- Results Area -->
+                <div id="resultsArea" style="display: none; border-top: 1px solid #475569; padding-top: 14px; margin-top: 14px;">
+                    <p id="statsMsg" style="font-weight: 600; margin-bottom: 12px; text-align: center; font-size: 14px; color: #f1f5f9;"></p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button id="cpJson" style="padding: 12px; background: #475569; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease;">
+                            📋 JSON
+                        </button>
+                        <button id="cpExcel" style="padding: 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease;">
+                            📊 Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(ui);
+
+        // Завантаження збережених налаштувань
+        const savedSettings = loadSettings();
+        if (savedSettings) {
+            // Відновлюємо метрики
+            if (savedSettings.metrics) {
+                Object.keys(savedSettings.metrics).forEach(key => {
+                    const checkbox = document.getElementById(`metric_${key}`);
+                    if (checkbox) checkbox.checked = savedSettings.metrics[key];
+                });
+            }
+            // Відновлюємо фільтри
+            if (savedSettings.filters) {
+                const onlyAva = document.getElementById('onlyAvailable');
+                const useYear = document.getElementById('useYearFilter');
+                const yearVal = document.getElementById('yearValue');
+                if (onlyAva) onlyAva.checked = savedSettings.filters.onlyAvailable;
+                if (useYear) useYear.checked = savedSettings.filters.useYearFilter;
+                if (yearVal) yearVal.value = savedSettings.filters.yearValue;
+            }
+            // Відновлюємо бренди
+            if (savedSettings.brands) {
+                const brandInput = document.getElementById('brandInput');
+                if (brandInput) brandInput.value = savedSettings.brands;
+            }
+        }
+
+        // Make draggable
+        makeDraggable(ui);
+
+        // Mode switching
+        let currentMode = savedSettings?.mode || 'brands';
+        const modeBrands = document.getElementById('modeBrands');
+        const modeDrop = document.getElementById('modeDrop');
+        const brandsSection = document.getElementById('brandsSection');
+
+        // Встановлюємо збережений режим
+        if (currentMode === 'drop') {
+            modeDrop.classList.add('active');
+            modeBrands.classList.remove('active');
+            brandsSection.style.display = 'none';
+        }
+
+        modeBrands.addEventListener('click', () => {
+            currentMode = 'brands';
+            modeBrands.classList.add('active');
+            modeDrop.classList.remove('active');
+            brandsSection.style.display = 'block';
+            saveSettings();
+        });
+
+        modeDrop.addEventListener('click', () => {
+            currentMode = 'drop';
+            modeDrop.classList.add('active');
+            modeBrands.classList.remove('active');
+            brandsSection.style.display = 'none';
+            saveSettings();
+        });
+
+        // Close button handler
+        const btnCloseUI = document.getElementById('btnCloseUI');
+        if (btnCloseUI) {
+            btnCloseUI.addEventListener('click', () => {
+                localStorage.setItem('domain-grabber-panel-open', 'false');
+                ui.remove();
+            });
+        }
+
+        // Add hover effects for buttons
+        const addHover = (id) => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.transform = 'translateY(-3px) scale(1.02)';
+                    btn.style.boxShadow = '0 8px 30px rgba(0,0,0,0.3)';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translateY(0) scale(1)';
+                    btn.style.boxShadow = btn.dataset.originalShadow || '0 6px 20px rgba(0,0,0,0.2)';
+                });
+            }
+        };
+        
+        ['btnGoToSetup', 'btnApplyConfig', 'btnProcess', 'btnCloseUI'].forEach(id => addHover(id));
+        
+        // Робимо метрики клікабельними
+        document.querySelectorAll('.metric-checkbox').forEach(box => {
+            box.addEventListener('click', (e) => {
+                // Якщо клік не по чекбоксу або лейблу, тоді тоглимо чекбокс
+                if (e.target.type !== 'checkbox' && e.target.tagName !== 'LABEL') {
+                    const checkbox = box.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        saveSettings();
+                    }
+                } else {
+                    // Якщо клік по чекбоксу або лейблу - зберігаємо після зміни
+                    setTimeout(saveSettings, 50);
+                }
+            });
+        });
+
+        // Збереження при зміні фільтрів
+        document.getElementById('onlyAvailable')?.addEventListener('change', saveSettings);
+        document.getElementById('useYearFilter')?.addEventListener('change', saveSettings);
+        document.getElementById('yearValue')?.addEventListener('change', saveSettings);
+        
+        // Add focus effect for textarea
+        const brandInput = document.getElementById('brandInput');
+        if (brandInput) {
+            brandInput.addEventListener('focus', () => { 
+                brandInput.style.borderColor = '#667eea';
+                brandInput.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+            });
+            brandInput.addEventListener('blur', () => { 
+                brandInput.style.borderColor = '#e0e0e0';
+                brandInput.style.boxShadow = 'none';
+                saveSettings(); // Зберігаємо при втраті фокусу
+            });
+            // Також зберігаємо при введенні (debounce)
+            let brandInputTimeout;
+            brandInput.addEventListener('input', () => {
+                clearTimeout(brandInputTimeout);
+                brandInputTimeout = setTimeout(saveSettings, 500);
+            });
+        }
+
+        // КНОПКА ПЕРЕЙТИ В COLUMN MANAGER (БЕЗ автоматичних змін)
+        const btnGoToSetup = document.getElementById('btnGoToSetup');
+        if (btnGoToSetup) {
+            btnGoToSetup.addEventListener('click', () => {
+                window.location.href = COLUMN_MANAGER_URL;
+            });
+        }
+
+        // КНОПКА ЗАСТОСУВАТИ КОНФІГУРАЦІЮ (юзер сам збереже)
+        const btnApplyConfig = document.getElementById('btnApplyConfig');
+        if (btnApplyConfig) {
+            btnApplyConfig.addEventListener('click', async () => {
+                if (window.location.href.includes("account/columnmanager")) {
+                    // Показуємо спіннер
+                    const spinner = showSpinner('⚡ Застосування конфігурації...\n\nЗачекайте, будь ласка');
+                    
+                    try {
+                        await autoSetupColumns();
+                        spinner.remove();
+                        showNotification('✅ Конфігурація застосована!\n\nТепер ВРУЧНУ натисніть "Save changes"', 'success');
+                    } catch (e) {
+                        spinner.remove();
+                        showNotification('❌ Помилка: ' + e.message, 'error');
+                    }
+                } else {
+                    showNotification('❌ Ця функція працює тільки на сторінці Column Manager!\n\nСпочатку натисніть "Перейти"', 'error');
+                }
+            });
+        }
+
+        const btnProcess = document.getElementById('btnProcess');
+        if (btnProcess) {
+            btnProcess.addEventListener('click', () => {
+                const data = processDomains(currentMode);
+                if (data.length > 0) {
+                    document.getElementById('resultsArea').style.display = 'block';
+                    document.getElementById('statsMsg').innerText = `✅ Знайдено: ${data.length}`;
+                    
+                    const setupCopyBtn = (id) => {
+                        const btn = document.getElementById(id);
+                        if (btn) {
+                            btn.addEventListener('mouseenter', () => {
+                                btn.style.transform = 'translateY(-2px)';
+                                btn.style.opacity = '0.9';
+                            });
+                            btn.addEventListener('mouseleave', () => {
+                                btn.style.transform = 'translateY(0)';
+                                btn.style.opacity = '1';
+                            });
+                        }
+                    };
+                    
+                    setupCopyBtn('cpJson');
+                    setupCopyBtn('cpExcel');
+                    
+                    const cpJson = document.getElementById('cpJson');
+                    const cpExcel = document.getElementById('cpExcel');
+                    
+                    if (cpJson) {
+                        cpJson.addEventListener('click', () => {
+                            // Кожен домен - окремий рядок (JSONL формат)
+                            const jsonLines = data.map(d => JSON.stringify(d)).join('\n');
+                            copyToClipboard(jsonLines, "JSON скопійовано!");
+                        });
+                    }
+                    
+                    if (cpExcel) {
+                        cpExcel.addEventListener('click', () => {
+                            // Формуємо TSV з вибраними метриками
+                            const headers = ['Brand', 'Domain'];
+                            if (data[0]?.bl !== undefined) headers.push('BL');
+                            if (data[0]?.acr !== undefined) headers.push('ACR');
+                            if (data[0]?.cf !== undefined) headers.push('CF');
+                            if (data[0]?.tf !== undefined) headers.push('TF');
+                            if (data[0]?.dp !== undefined) headers.push('DP');
+                            
+                            const rows = data.map(d => {
+                                const row = [d.brand, d.domain];
+                                if (d.bl !== undefined) row.push(d.bl);
+                                if (d.acr !== undefined) row.push(d.acr);
+                                if (d.cf !== undefined) row.push(d.cf);
+                                if (d.tf !== undefined) row.push(d.tf);
+                                if (d.dp !== undefined) row.push(d.dp);
+                                return row.join('\t');
+                            });
+                            
+                            const tsv = headers.join('\t') + '\n' + rows.join('\n');
+                            copyToClipboard(tsv, "Дані для таблиць скопійовано!");
+                        });
+                    }
+                } else {
+                    alert('Домени не знайдені. Перевірте фільтри.');
+                }
+            });
+        }
+    }
+
+    // Функція показу спіннера
+    function showSpinner(message) {
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner-overlay';
+        spinner.innerHTML = `
+            <div class="spinner"></div>
+            <div class="spinner-text">${message}</div>
+        `;
+        document.body.appendChild(spinner);
+        return spinner;
+    }
+
+    // Функція показу нотифікацій
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        const colors = {
+            success: 'linear-gradient(135deg, #00b894 0%, #00cec9 100%)',
+            error: 'linear-gradient(135deg, #ff7675 0%, #d63031 100%)',
+            info: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        };
+        
+        Object.assign(notification.style, {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: '100003',
+            background: colors[type] || colors.info,
+            color: 'white',
+            padding: '30px 40px',
+            borderRadius: '20px',
+            fontSize: '16px',
+            fontWeight: '600',
+            textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+            whiteSpace: 'pre-line',
+            lineHeight: '1.6',
+            maxWidth: '500px'
+        });
+        
+        notification.innerHTML = message + '<br><br><button style="margin-top: 15px; padding: 10px 30px; background: rgba(255,255,255,0.9); color: #2d3748; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px;">OK</button>';
+        document.body.appendChild(notification);
+        
+        notification.querySelector('button').addEventListener('click', () => {
+            notification.remove();
+        });
+        
+        return notification;
+    }
+
+    // Функція для перетягування панелі
+    function makeDraggable(element) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        const header = element.querySelector('.grabber-header');
+        
+        if (header) {
+            header.onmousedown = dragMouseDown;
+        } else {
+            element.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            // Ігноруємо клік на інтерактивних елементах
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') {
+                return;
+            }
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+            element.style.cursor = 'grabbing';
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            
+            const newTop = element.offsetTop - pos2;
+            const newLeft = element.offsetLeft - pos1;
+            
+            // Обмежуємо переміщення в межах вікна
+            const maxX = window.innerWidth - element.offsetWidth;
+            const maxY = window.innerHeight - element.offsetHeight;
+            
+            element.style.top = Math.max(0, Math.min(newTop, maxY)) + "px";
+            element.style.left = Math.max(0, Math.min(newLeft, maxX)) + "px";
+            element.style.right = 'auto';
+        }
+
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+            element.style.cursor = 'move';
+        }
+    }
+
+    // === ФУНКЦІЯ АВТОМАТИЗАЦІЇ КОЛОНОК ===
+    async function autoSetupColumns() {
+        const targetValues = ["bl", "aentries", "majesticseo_cf", "majesticseo_tf", "domainpop", "adddate"];
+        const selected = document.querySelector('.selected.ui-sortable');
+        const selections = document.querySelector('.selections');
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        const fire = (el, type, x, y) => {
+            el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, buttons: 1 }));
+        };
+
+        async function realDrag(item, targetIndex) {
+            const start = item.getBoundingClientRect();
+            const target = selected.children[targetIndex].getBoundingClientRect();
+            const startX = start.left + start.width / 2;
+            const startY = start.top + start.height / 2;
+            const endX = target.left + target.width / 2;
+            const endY = target.top + target.height / 2;
+            fire(item, 'mousedown', startX, startY);
+            await sleep(50);
+            for (let i = 1; i <= 6; i++) {
+                fire(document, 'mousemove', startX + (endX - startX) * (i / 6), startY + (endY - startY) * (i / 6));
+                await sleep(30);
+            }
+            fire(document, 'mouseup', endX, endY);
+            await sleep(100);
+        }
+
+        // 1. Очищення
+        [...selected.querySelectorAll('.item')].forEach(i => {
+            if (!targetValues.includes(i.dataset.value)) {
+                i.querySelector('.remove-selected')?.click();
+            }
+        });
+        await sleep(500);
+
+        // 2. Додавання
+        for (const v of targetValues) {
+            if (!selected.querySelector(`.item[data-value="${v}"]`)) {
+                selections.querySelector(`.item[data-value="${v}"]`)?.querySelector('input, label')?.click();
+                await sleep(200);
+            }
+        }
+        await sleep(500);
+
+        // 3. Сортування
+        for (let i = 0; i < targetValues.length; i++) {
+            const item = selected.querySelector(`.item[data-value="${targetValues[i]}"]`);
+            if (item && selected.children[i] !== item) {
+                await realDrag(item, i);
+            }
+        }
+
+        // БЕЗ автоматичного збереження - юзер сам натисне Save
+    }
+
+    function processDomains(mode = 'brands') {
+        const onlyAva = document.getElementById('onlyAvailable').checked;
+        const useYear = document.getElementById('useYearFilter').checked;
+        const targetYear = parseInt(document.getElementById('yearValue').value) || 2020;
+        
+        // Отримуємо вибрані метрики
+        const selectedMetrics = {
+            bl: document.getElementById('metric_bl')?.checked || false,
+            acr: document.getElementById('metric_acr')?.checked || false,
+            cf: document.getElementById('metric_cf')?.checked || false,
+            tf: document.getElementById('metric_tf')?.checked || false,
+            dp: document.getElementById('metric_dp')?.checked || false
+        };
+
+        let searchBrands = [];
+        if (mode === 'brands') {
+            const brandsText = document.getElementById('brandInput')?.value || '';
+            const brandRows = brandsText.split(/[\s\n,]+/).map(b => b.trim()).filter(b => b.length > 1);
+            searchBrands = [...new Set(brandRows)].sort((a, b) => b.length - a.length);
+        }
+
+        let collectedData = [];
+        const domainCells = document.querySelectorAll("td.field_domain");
+        domainCells.forEach(cell => {
+            try {
+                const row = cell.closest('tr');
+                if (!row) return;
+                
+                const domainEl = cell.querySelector("a");
+                if (!domainEl) return;
+                
+                const domain = domainEl.innerText.trim().toLowerCase();
+                
+                if (onlyAva) {
+                    // Шукаємо в field_whois2 або field_whois
+                    const statusEl = row.querySelector(".field_whois2 a") || row.querySelector(".field_whois a");
+                    const status = statusEl?.innerText.trim().toLowerCase();
+                    if (status !== "available") {
+                        return;
+                    }
+                }
+                if (useYear) {
+                    const dateText = row.querySelector(".field_adddate")?.innerText.trim();
+                    const yearMatch = dateText ? dateText.match(/^\d{4}/) : null;
+                    const year = yearMatch ? parseInt(yearMatch[0]) : 0;
+                    if (year < targetYear) {
+                        return;
+                    }
+                }
+                const getStat = (cls) => {
+                    const el = row.querySelector(`.${cls}`);
+                    return el ? parseInt(el.innerText.replace(/[^0-9]/g, '')) || 0 : 0;
+                };
+                
+                let matchedBrand = "";
+                
+                if (mode === 'drop') {
+                    // Режим DROP - завжди "DROP"
+                    matchedBrand = "DROP";
+                } else if (mode === 'brands') {
+                    // Режим BRANDS - шукаємо співпадіння, якщо не знайдено = пустота
+                    if (searchBrands.length > 0) {
+                        const cleanDomain = domain.replace(/[^a-z0-9]/g, "");
+                        for (let b of searchBrands) {
+                            if (cleanDomain.includes(b.toLowerCase().replace(/[^a-z0-9]/g, ""))) {
+                                matchedBrand = b;
+                                break;
+                            }
+                        }
+                    }
+                    // Якщо не знайдено - matchedBrand залишається ""
+                }
+                
+                // Збираємо тільки вибрані метрики
+                const domainData = { domain, brand: matchedBrand };
+                if (selectedMetrics.bl) domainData.bl = getStat("field_bl");
+                if (selectedMetrics.acr) domainData.acr = getStat("field_aentries");
+                if (selectedMetrics.cf) domainData.cf = getStat("field_majesticseo_cf");
+                if (selectedMetrics.tf) domainData.tf = getStat("field_majesticseo_tf");
+                if (selectedMetrics.dp) domainData.dp = getStat("field_domainpop");
+                
+                collectedData.push(domainData);
+            } catch (e) {
+                // Ігноруємо помилки
+            }
+        });
+        return collectedData.sort((a, b) => {
+            // В режимі DROP сортуємо тільки по домену
+            if (mode === 'drop') {
+                return a.domain.localeCompare(b.domain);
+            }
+            // В режимі BRANDS сортуємо по бренду, потім по домену
+            return (a.brand && !b.brand) ? -1 : (!a.brand && b.brand) ? 1 : a.brand.localeCompare(b.brand) || a.domain.localeCompare(b.domain);
+        });
+    }
+
+    function copyToClipboard(text, msg) {
+        navigator.clipboard.writeText(text).then(() => {
+            const stats = document.getElementById('statsMsg');
+            stats.innerText = msg;
+            stats.style.color = "#10b981"; // Зелений
+            setTimeout(() => { 
+                stats.style.color = "#f1f5f9"; // Повертаємо світлий колір для темної теми
+            }, 2000);
+        });
+    }
+
+    // Збереження налаштувань
+    function saveSettings() {
+        const settings = {
+            mode: document.querySelector('.mode-switch button.active')?.id === 'modeBrands' ? 'brands' : 'drop',
+            metrics: {
+                bl: document.getElementById('metric_bl')?.checked || false,
+                acr: document.getElementById('metric_acr')?.checked || false,
+                cf: document.getElementById('metric_cf')?.checked || false,
+                tf: document.getElementById('metric_tf')?.checked || false,
+                dp: document.getElementById('metric_dp')?.checked || false
+            },
+            filters: {
+                onlyAvailable: document.getElementById('onlyAvailable')?.checked || false,
+                useYearFilter: document.getElementById('useYearFilter')?.checked || false,
+                yearValue: document.getElementById('yearValue')?.value || '2020'
+            },
+            brands: document.getElementById('brandInput')?.value || ''
+        };
+        localStorage.setItem('domain-grabber-settings', JSON.stringify(settings));
+    }
+
+    // Завантаження налаштувань
+    function loadSettings() {
+        const saved = localStorage.getItem('domain-grabber-settings');
+        if (!saved) return null;
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            return null;
+        }
+    }
+})();
