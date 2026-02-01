@@ -637,7 +637,9 @@
         const autofiltersToggle = document.getElementById('autofilters-toggle');
         
         // Завантаження стану (згорнуто чи ні) з localStorage
-        const autofiltersCollapsed = localStorage.getItem('domain-grabber-autofilters-collapsed') === 'true';
+        // За замовчуванням згорнуто для нових користувачів
+        const autofiltersCollapsedValue = localStorage.getItem('domain-grabber-autofilters-collapsed');
+        const autofiltersCollapsed = autofiltersCollapsedValue === null ? true : autofiltersCollapsedValue === 'true';
         if (autofiltersCollapsed) {
             autofiltersContent.style.display = 'none';
             if (autofiltersToggle) {
@@ -669,7 +671,9 @@
         const metricsHeader = document.getElementById('metricsHeader');
         const metricsContent = document.getElementById('metricsContent');
         const metricsToggle = document.getElementById('metrics-toggle');
-        const metricsCollapsed = localStorage.getItem('domain-grabber-metrics-collapsed') === 'true';
+        // За замовчуванням згорнуто для нових користувачів
+        const metricsCollapsedValue = localStorage.getItem('domain-grabber-metrics-collapsed');
+        const metricsCollapsed = metricsCollapsedValue === null ? true : metricsCollapsedValue === 'true';
         if (metricsCollapsed && metricsContent) {
             metricsContent.style.display = 'none';
             if (metricsToggle) {
@@ -700,7 +704,9 @@
         const filtersHeader = document.getElementById('filtersHeader');
         const filtersContent = document.getElementById('filtersContent');
         const filtersToggle = document.getElementById('filters-toggle');
-        const filtersCollapsed = localStorage.getItem('domain-grabber-filters-collapsed') === 'true';
+        // За замовчуванням згорнуто для нових користувачів
+        const filtersCollapsedValue = localStorage.getItem('domain-grabber-filters-collapsed');
+        const filtersCollapsed = filtersCollapsedValue === null ? true : filtersCollapsedValue === 'true';
         if (filtersCollapsed && filtersContent) {
             filtersContent.style.display = 'none';
             if (filtersToggle) {
