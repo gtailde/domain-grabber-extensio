@@ -20,6 +20,11 @@
             return;
         }
         
+        // Перевіряємо чи кнопка вже існує
+        if (document.getElementById('domain-grabber-launch-btn')) {
+            return;
+        }
+        
         // Створюємо кнопку запуску (тільки на expireddomains.net)
         const launchBtn = document.createElement('button');
         launchBtn.innerText = '🚀 Grab';
@@ -38,6 +43,12 @@
             e.stopPropagation();
             showMainUI();
         });
+        
+        // Перевіряємо чи панель була відкрита раніше
+        const wasPanelOpen = localStorage.getItem('domain-grabber-panel-open') === 'true';
+        if (wasPanelOpen) {
+            showMainUI();
+        }
         
         // Hover effect
         launchBtn.addEventListener('mouseenter', () => {
