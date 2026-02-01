@@ -1225,12 +1225,9 @@
 
     function copyToClipboard(text, msg) {
         navigator.clipboard.writeText(text).then(() => {
-            const stats = document.getElementById('statsMsg');
-            stats.innerText = msg;
-            stats.style.color = "#10b981"; // Зелений
-            setTimeout(() => { 
-                stats.style.color = "#f1f5f9"; // Повертаємо світлий колір для темної теми
-            }, 2000);
+            showNotification(msg, 'success');
+        }).catch(err => {
+            showNotification('❌ Помилка копіювання!\n\n' + err.message, 'error');
         });
     }
 
