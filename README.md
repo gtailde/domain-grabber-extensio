@@ -13,14 +13,14 @@
 ### Варіант 1: Клонувати з GitHub (рекомендовано)
 
 ```bash
-# 1. Клонуємо репозиторій
-git clone https://github.com/YOUR_USERNAME/domain-grabber-extension.git
-cd domain-grabber-extension
+# Клонуємо репозиторій
+git clone https://github.com/gtailde/domain-grabber-extensio.git
+cd domain-grabber-extensio
 ```
 
 ### Варіант 2: Завантажити ZIP
 
-1. Завантажте ZIP архів з [Releases](https://github.com/YOUR_USERNAME/domain-grabber-extension/releases)
+1. Завантажте ZIP архів з [Releases](https://github.com/gtailde/domain-grabber-extensio/releases)
 2. Розпакуйте в будь-яку папку
 
 ### Установка в Chrome
@@ -173,8 +173,8 @@ cd domain-grabber-extension
 
 ```bash
 # Fork проект на GitHub
-git clone https://github.com/gtailde/domain-grabber-extension.git
-cd domain-grabber-extension
+git clone https://github.com/gtailde/domain-grabber-extensio.git
+cd domain-grabber-extensio
 
 # Створіть гілку для нової функції
 git checkout -b feature/amazing-feature
@@ -199,8 +199,8 @@ MIT License - використовуйте вільно для особисти�
 
 ## 🆘 Підтримка
 
-- 🐛 Issues: [GitHub Issues](https://github.com/gtailde/domain-grabber-extension/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/gtailde/domain-grabber-extension/discussions)
+- 🐛 Issues: [GitHub Issues](https://github.com/gtailde/domain-grabber-extensio/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/gtailde/domain-grabber-extensio/discussions)
 
 ---
 
@@ -230,43 +230,6 @@ MIT License - використовуйте вільно для особисти�
 - 🚀 Початковий реліз
 - 📊 Базовий збір метрик
 - 🎨 Простий UI
-
----
-
-## 🚀 Як створити GitHub репозиторій
-
-### 1. Створіть репозиторій на GitHub
-
-1. Відкрийте [GitHub](https://github.com)
-2. Натисніть **New repository**
-3. Назва: `domain-grabber-extension`
-4. Опис: `Chrome extension for scraping ExpiredDomains.net`
-5. Public або Private (на ваш вибір)
-6. **НЕ створюйте** README, .gitignore (вони вже є)
-7. Натисніть **Create repository**
-
-### 2. Підключіть локальний репозиторій
-
-```bash
-# Перейдіть в папку з розширенням
-cd c:\Users\Oleg\Desktop\Repalm\repalmExtensions
-
-# Додайте віддалений репозиторій
-git remote add origin https://github.com/gtailde/domain-grabber-extension.git
-
-# Перевірте що remote додано
-git remote -v
-
-# Push код на GitHub
-git push -u origin master
-```
-
-### 3. Готово!
-
-Тепер ваш код на GitHub! Поділіться посиланням:
-```
-https://github.com/gtailde/domain-grabber-extension
-```
 
 ---
 
