@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Domain Metrics Grabber Pro",
-  "version": "3.6.1",
+  "version": "3.7",
   "description": "Збір доменів та метрик з ExpiredDomains.net з вибором метрик та автозаповненням фільтрів",
   "permissions": ["activeTab", "clipboardWrite"],
   "action": {

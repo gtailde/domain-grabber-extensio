@@ -370,27 +370,29 @@
                     </div>
                 </div>
 
+                <!-- Export Format Selection -->
+                <div class="section-card" style="margin-bottom: 14px;">
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">📥 Формат експорту:</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: #e2e8f0; padding: 10px; background: #475569; border-radius: 6px; border: 2px solid #3b82f6; transition: all 0.2s ease;" id="formatJsonLabel">
+                            <input type="radio" name="exportFormat" id="formatJson" value="json" checked style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
+                            <span style="font-weight: 600;">📋 JSON</span>
+                        </label>
+                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: #e2e8f0; padding: 10px; background: #475569; border-radius: 6px; border: 2px solid transparent; transition: all 0.2s ease;" id="formatExcelLabel">
+                            <input type="radio" name="exportFormat" id="formatExcel" value="excel" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer; accent-color: #10b981;">
+                            <span style="font-weight: 600;">📊 Excel</span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div style="display: flex; gap: 10px; margin-top: 14px;">
                     <button id="btnProcess" style="flex: 1; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s ease; letter-spacing: 0.3px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
-                        🎯 ЗІБРАТИ
+                        🎯 ЗІБРАТИ І СКОПІЮВАТИ
                     </button>
                     <button id="btnCloseUI" style="padding: 14px 18px; background: #475569; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: all 0.2s ease; font-weight: 600;">
                         ✖️
                     </button>
-                </div>
-
-                <!-- Results Area -->
-                <div id="resultsArea" style="display: none; border-top: 1px solid #475569; padding-top: 14px; margin-top: 14px;">
-                    <p id="statsMsg" style="font-weight: 600; margin-bottom: 12px; text-align: center; font-size: 14px; color: #f1f5f9;"></p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <button id="cpJson" style="padding: 12px; background: #475569; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease;">
-                            📋 JSON
-                        </button>
-                        <button id="cpExcel" style="padding: 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease;">
-                            📊 Excel
-                        </button>
-                    </div>
                 </div>
             </div>
         `;
@@ -457,6 +459,35 @@
             brandsSection.style.display = 'none';
             saveSettings();
         });
+
+        // Обробники для вибору формату експорту
+        const formatJson = document.getElementById('formatJson');
+        const formatExcel = document.getElementById('formatExcel');
+        const formatJsonLabel = document.getElementById('formatJsonLabel');
+        const formatExcelLabel = document.getElementById('formatExcelLabel');
+        
+        formatJson?.addEventListener('change', () => {
+            if (formatJson.checked) {
+                formatJsonLabel.style.borderColor = '#3b82f6';
+                formatExcelLabel.style.borderColor = 'transparent';
+                saveSettings();
+            }
+        });
+        
+        formatExcel?.addEventListener('change', () => {
+            if (formatExcel.checked) {
+                formatExcelLabel.style.borderColor = '#10b981';
+                formatJsonLabel.style.borderColor = 'transparent';
+                saveSettings();
+            }
+        });
+        
+        // Відновлюємо вибраний формат
+        if (savedSettings?.exportFormat === 'excel') {
+            formatExcel.checked = true;
+            formatExcelLabel.style.borderColor = '#10b981';
+            formatJsonLabel.style.borderColor = 'transparent';
+        }
 
         // Close button handler
         const btnCloseUI = document.getElementById('btnCloseUI');
@@ -686,63 +717,37 @@
             btnProcess.addEventListener('click', () => {
                 const data = processDomains(currentMode);
                 if (data.length > 0) {
-                    document.getElementById('resultsArea').style.display = 'block';
-                    document.getElementById('statsMsg').innerText = `✅ Знайдено: ${data.length}`;
+                    // Визначаємо вибраний формат
+                    const selectedFormat = document.querySelector('input[name="exportFormat"]:checked')?.value || 'json';
                     
-                    const setupCopyBtn = (id) => {
-                        const btn = document.getElementById(id);
-                        if (btn) {
-                            btn.addEventListener('mouseenter', () => {
-                                btn.style.transform = 'translateY(-2px)';
-                                btn.style.opacity = '0.9';
-                            });
-                            btn.addEventListener('mouseleave', () => {
-                                btn.style.transform = 'translateY(0)';
-                                btn.style.opacity = '1';
-                            });
-                        }
-                    };
-                    
-                    setupCopyBtn('cpJson');
-                    setupCopyBtn('cpExcel');
-                    
-                    const cpJson = document.getElementById('cpJson');
-                    const cpExcel = document.getElementById('cpExcel');
-                    
-                    if (cpJson) {
-                        cpJson.addEventListener('click', () => {
-                            // Кожен домен - окремий рядок (JSONL формат)
-                            const jsonLines = data.map(d => JSON.stringify(d)).join('\n');
-                            copyToClipboard(jsonLines, "JSON скопійовано!");
+                    if (selectedFormat === 'json') {
+                        // Кожен домен - окремий рядок (JSONL формат)
+                        const jsonLines = data.map(d => JSON.stringify(d)).join('\n');
+                        copyToClipboard(jsonLines, `✅ JSON скопійовано!\n\nЗнайдено доменів: ${data.length}`);
+                    } else {
+                        // Формуємо TSV з вибраними метриками
+                        const headers = ['Brand', 'Domain'];
+                        if (data[0]?.bl !== undefined) headers.push('BL');
+                        if (data[0]?.acr !== undefined) headers.push('ACR');
+                        if (data[0]?.cf !== undefined) headers.push('CF');
+                        if (data[0]?.tf !== undefined) headers.push('TF');
+                        if (data[0]?.dp !== undefined) headers.push('DP');
+                        
+                        const rows = data.map(d => {
+                            const row = [d.brand, d.domain];
+                            if (d.bl !== undefined) row.push(d.bl);
+                            if (d.acr !== undefined) row.push(d.acr);
+                            if (d.cf !== undefined) row.push(d.cf);
+                            if (d.tf !== undefined) row.push(d.tf);
+                            if (d.dp !== undefined) row.push(d.dp);
+                            return row.join('\t');
                         });
-                    }
-                    
-                    if (cpExcel) {
-                        cpExcel.addEventListener('click', () => {
-                            // Формуємо TSV з вибраними метриками
-                            const headers = ['Brand', 'Domain'];
-                            if (data[0]?.bl !== undefined) headers.push('BL');
-                            if (data[0]?.acr !== undefined) headers.push('ACR');
-                            if (data[0]?.cf !== undefined) headers.push('CF');
-                            if (data[0]?.tf !== undefined) headers.push('TF');
-                            if (data[0]?.dp !== undefined) headers.push('DP');
-                            
-                            const rows = data.map(d => {
-                                const row = [d.brand, d.domain];
-                                if (d.bl !== undefined) row.push(d.bl);
-                                if (d.acr !== undefined) row.push(d.acr);
-                                if (d.cf !== undefined) row.push(d.cf);
-                                if (d.tf !== undefined) row.push(d.tf);
-                                if (d.dp !== undefined) row.push(d.dp);
-                                return row.join('\t');
-                            });
-                            
-                            const tsv = headers.join('\t') + '\n' + rows.join('\n');
-                            copyToClipboard(tsv, "Дані для таблиць скопійовано!");
-                        });
+                        
+                        const tsv = headers.join('\t') + '\n' + rows.join('\n');
+                        copyToClipboard(tsv, `✅ Excel дані скопійовано!\n\nЗнайдено доменів: ${data.length}`);
                     }
                 } else {
-                    alert('Домени не знайдені. Перевірте фільтри.');
+                    showNotification('❌ Домени не знайдені!\n\nПеревірте фільтри та спробуйте ще раз', 'error');
                 }
             });
         }
@@ -1233,6 +1238,7 @@
     function saveSettings() {
         const settings = {
             mode: document.querySelector('.mode-switch button.active')?.id === 'modeBrands' ? 'brands' : 'drop',
+            exportFormat: document.querySelector('input[name="exportFormat"]:checked')?.value || 'json',
             metrics: {
                 bl: document.getElementById('metric_bl')?.checked || false,
                 acr: document.getElementById('metric_acr')?.checked || false,
