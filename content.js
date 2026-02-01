@@ -1,6 +1,11 @@
 (function() {
     // === КОНФІГУРАЦІЯ ===
     const COLUMN_MANAGER_URL = "https://member.expireddomains.net/account/columnmanager/";
+    
+    // Списки для фільтрів
+    const BLACK_ZONES = ['faith', 'auspost', 'pink', 'sanofi', 'vote', 'barclaycard', 'trading', 'flickr', 'nexus', 'flights', 'abogado', 'ipiranga', 'bradesco', 'java', 'express', 'frl', 'you', 'energy', 'garden', 'repair', 'brother', 'watch', 'memorial', 'rocks', 'gal', 'hamburg', 'jeep', 'bar', 'soy', 'osaka', 'phone', 'horse', 'world', 'exposed', 'sandvik', 'futbol', 'gay', 'study', 'box', 'ryukyu', 'nike', 'bid', 'dental', 'ngo', 'engineering', 'ventures', 'tirol', 'mma', 'cars', 'kaufen', 'bauhaus', 'supply', 'voto', 'jp', 'whoswho', 'download', 'community', 'financial', 'africa', 'forsale', 'rip', 'safety', 'center', 'eco', 'email', 'philips', 'abb', 'how', 'forex', 'makeup', 'family', 'com.my', 'google', 'schwarz', 'basketball', 'hosting', 'versicherung', 'sarl', 'services', 'engineer', 'shoes', 'ruhr', 'wang', 'prod', 'insure', 'talk', 'cool', 'watches', 'wine', 'agency', 'kpmg', 'dance', 'page', 'capital', 'nico', 'toshiba', 'lifestyle', 'casa', 'epson', 'tattoo', 'racing', 'yoga', 'hair', 'holiday', 'dhl', 'sucks', 'voting', 'capetown', 'show', 'compare', 'viajes', 'immobilien', 'vig', 'softbank', 'sky', 'giving', 'locker', 'komatsu', 'video', 'ski', 'dot', 'studio', 'restaurant', 'genting', 'law', 'partners', 'skin', 'yandex', 'tokyo', 'plumbing', 'lol', 'song', 'nagoya', 'claims', 'cam', 'fage', 'democrat', 'date', 'trust', 'broker', 'rent', 'design', 'construction', 'fish', 'rehab', 'axa', 'diamonds', 'crs', 'amex', 'dvag', 'gop', 'kim', 'cooking', 'cfa', 'au', 'markets', 'money', 'mortgage', 'store', 'boo', 'gives', 'moi', 'pioneer', 'spa', 'taipei', 'akdn', 'villas', 'doctor', 'dealer', 'tube', 'case', 'cn', 'toyota', 'baby', 'saxo', 'tv', 'pharmacy', 'uno', 'press', 'direct', 'education', 'fashion', 'jewelry', 'care', 'equipment', 'read', 'lotto', 'luxury', 'football', 'tires', 'saarland', 'toys', 'sydney', 'sener', 'diy', 'feedback', 'rodeo', 'amsterdam', 'accountants', 'photo', 'desi', 'computer', 'vision', 'fail', 'contractors', 'flowers', 'prof', 'erni', 'comau', 'healthcare', 'credit', 'itau', 'irish', 'audi', 'solutions', 'qpon', 'comtr', 'dnp', 'rugby', 'sncf', 'singles', 'yokohama', 'productions', 'discount', 'run', 'monash', 'okinawa', 'yachts', 'accountant', 'immo', 'leclerc', 'bot', 'fishing', 'college', 'surf', 'earth', 'lighting', 'shopping', 'gold', 'gripe', 'madrid', 'maison', 'day', 'degree', 'jetzt', 'porn', 'army', 'hockey', 'nab', 'menu', 'institute', 'forum', 'spot', 'fit', 'hsbc', 'kr', 'fast', 'software', 'webcam', 'sbi', 'food', 'corsica', 'sap', 'music', 'abudhabi', 'rentals', 'works', 'cm', 'creditcard', 'mba', 'quest', 'ir', 'promo', 'man', 'ru', 'wien', 'tips', 'living', 'photos', 'management', 'youtube', 'cern', 'shop', 'sina', 'vodka', 'ist', 'afl', 'nhk', 'career', 'miami', 'rich', 'stream', 'lidl', 'beer', 'deal', 'organic', 'fox', 'report', 'eus', 'fujitsu', 'us', 'meet', 'car', 'ismaili', 'gmo', 'parts', 'shell', 'sexy', 'bio', 'party', 'christmas', 'science', 'catering', 'voyage', 'next', 'cricket', 'estate', 'tax', 'srl', 'limited', 'shiksha', 'swiss', 'tennis', 'call', 'exchange', 'love', 'neustar', 'lawyer', 'scb', 'recipes', 'realestate', 'bible', 'dentist', 'ua', 'today', 'pizza', 'blackfriday', 'health', 'bridgestone', 'attorney', 'ltda', 'id', 'haus', 'cba', 'men', 'surgery', 'directory', 'cheap', 'style', 'scot', 'boston', 'coupons', 'contact', 'ceo', 'realtor', 'mom', 'sharp', 'quebec', 'physio', 'navy', 'courses', 'work', 'broadway', 'graphics', 'hiphop', 'gle', 'actor', 'bnpparibas', 'properties', 'buzz', 'cyou', 'solar', 'kred', 'gmail', 'berlin', 'zone', 'gdn', 'academy', 'tui', 'sex', 'trade', 'support', 'eat', 'auto', 'mov', 'office', 'goo', 'sbs', 'delivery', 'legal', 'consulting', 'camera', 'tools', 'godaddy', 'diet', 'canon', 'ovh', 'photography', 'art', 'gratis', 'ren', 'dad', 'seat', 'ifm', 'co.id', 'industries', 'honda', 'news', 'systems', 'training', 'koeln', 'tech', 'social', 'save', 'sale', 'city', 'limo', 'associates', 'fyi', 'bank', 'ar', 'vip', 'schmidt', 'cards', 'moe', 'market', 'reise', 'bike', 'cleaning', 'rwe', 'bmw', 'farm', 'town', 'loan', 'weber', 'bzh', 'apartments', 'tienda', 'tickets', 'green', 'chrome', 'uol', 'supplies', 'williamhill', 'chat', 'goog', 'llc', 'house', 'theater', 'brussels', 'pet', 'hitachi', 'moda', 'temasek', 'bargains', 'paris', 'cruises', 'cfd', 'golf', 'fm', 'events', 'vin', 'aws', 'map', 'realty', 'company', 'team', 'melbourne', 'fitness', 'church', 'school', 'citic', 'amazon', 'su', 'theatre', 'marketing', 'autos', 'global', 'kpn', 'boutique', 'wtf', 'kids', 'film', 'commy', 'property', 'foo', 'luxe', 'gifts', 'beauty', 'radio', 'bond', 'ninja', 'movie', 'audio', 'rio', 'vegas', 'careers', 'adult', 'weir', 'london', 'tw', 'protection', 'dog', 'furniture', 'plus', 'cymru', 'taxi', 'life', 'pictures', 'investments', 'ltd', 'vlaanderen', 'tours', 'airforce', 'band', 'enterprises', 'blue', 'microsoft', 'soccer', 'hot', 'kitchen', 'ads', 'panasonic', 'gmbh', 'phd', 'gallery', 'storage', 'tr', 'coffee', 'cafe', 'website', 'ong', 'esq', 'barcelona', 'meme', 'group', 'coach', 'archi', 'nyc', 'builders', 'florist', 'cologne', 'durban', 'no', 'charity', 'build', 'red', 'holdings', 'foundation', 'gift', 'fund', 'republican', 'zero', 'juegos', 'joburg', 'edeka', 'dating', 'globo', 'observer', 'med', 'by', 'clothing', 'wedding', 'security', 'pics', 'guitars', 'ses', 'rsvp', 'sony', 'homes', 'xin', 'international', 'vet', 'krd', 'barclays', 'loans', 'reisen', 'stockholm', 'media', 'clinic', 'camp', 'university', 'bbc', 'org.uk', 'ing', 'select', 'vacations', 'hospital', 'istanbul', 'rmit', 'lgbt', 'condos', 'jcb', 'finance', 'zip', 'deloitte', 'boats', 'hiv', 'pub', 'moscow', 'country', 'statefarm', 'nrw', 'wales', 'kiwi', 'ntt', 'salon', 'monster', 'tatar', 'pictet', 'schule', 'motorcycles', 'zuerich', 'cuisinella', 'network', 'glass', 'kyoto', 'dev', 'abbott', 'cab', 'technology', 'lease', 'free', 'gent', 'bayern', 'deals', 'ooo', 'alsace', 'business'];
+    
+    const GAMBLING_WORDS = ['coin', 'bet', 'gambl', 'game', 'win', 'bonus', 'baccarat', 'luck', 'pokies', 'roulette', 'spin', 'poker', 'blackjack', 'parlay', 'bitstar', 'bookmaker', 'gaming', 'stake', 'zilla', 'wallet', 'casino', 'play', 'cash', 'jackpot', 'slot', 'token'];
 
     // Чекаємо завантаження DOM
     if (document.readyState === 'loading') {
@@ -85,7 +90,7 @@
             borderRadius: '12px',
             boxShadow: '0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', 
             fontFamily: 'system-ui, -apple-system, sans-serif', 
-            width: '480px',
+            width: '520px',
             animation: 'slideInRight 0.3s ease-out',
             cursor: 'move'
         });
@@ -231,6 +236,71 @@
                             ✨ Застосувати
                         </button>
                     </div>
+                </div>
+
+                <!-- Auto Filters Section -->
+                <div class="section-card" style="background: #334155; border-color: #475569;">
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">🎯 Автозаповнення фільтрів</h3>
+                    
+                    <!-- Основні фільтри -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
+                            <span><input type="checkbox" id="filter_acr_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"> ACR >=</span>
+                            <input type="number" id="filter_acr_value" value="1" min="0" style="width: 50px; padding: 4px 6px; border: 1px solid #64748b; border-radius: 4px; font-size: 12px; text-align: center; background: #334155; color: #e2e8f0;">
+                        </label>
+                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
+                            <span><input type="checkbox" id="filter_available_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"> Only Available</span>
+                        </label>
+                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
+                            <span><input type="checkbox" id="filter_limit_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"> Results Limit</span>
+                            <select id="filter_limit_value" style="width: 70px; padding: 4px 6px; border: 1px solid #64748b; border-radius: 4px; font-size: 12px; background: #334155; color: #e2e8f0;">
+                                <option value="0">1</option>
+                                <option value="1">2</option>
+                                <option value="2">3</option>
+                                <option value="3">4</option>
+                                <option value="4" selected>5</option>
+                            </select>
+                        </label>
+                    </div>
+                    
+                    <!-- Період -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #f1f5f9; margin-bottom: 6px;">⏱️ Період:</label>
+                        <select id="filter_period" style="width: 100%; padding: 6px 8px; border: 1px solid #64748b; border-radius: 4px; font-size: 12px; background: #475569; color: #e2e8f0;">
+                            <option value="">Не встановлювати</option>
+                            <option value="flast12">12 hours</option>
+                            <option value="flast24">24 hours</option>
+                            <option value="flast48">48 hours</option>
+                            <option value="flast168" selected>7 days</option>
+                            <option value="flast14d">14 days</option>
+                            <option value="flast30d">30 days</option>
+                            <option value="flast60d">60 days</option>
+                            <option value="flast90d">90 days</option>
+                            <option value="flast120d">120 days</option>
+                            <option value="flast365d">365 days</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Contains (gambling) -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px;">
+                            <input type="checkbox" id="filter_contains_enable" style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
+                            <span style="font-weight: 600;">🎰 Contains (gambling)</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Black zones -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px;">
+                            <input type="checkbox" id="filter_blackzone_enable" style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
+                            <span style="font-weight: 600;">🚫 Block TLDs (${BLACK_ZONES.length})</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Кнопка застосувати -->
+                    <button id="btnApplyFilters" style="width: 100%; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; margin-top: 6px;">
+                        ⚡ Встановити фільтри
+                    </button>
                 </div>
 
                 <!-- Brands Input (shown only in BRANDS mode) -->
@@ -466,6 +536,53 @@
             });
         }
 
+        // КНОПКА ВСТАНОВИТИ ФІЛЬТРИ
+        const btnApplyFilters = document.getElementById('btnApplyFilters');
+        if (btnApplyFilters) {
+            btnApplyFilters.addEventListener('click', async () => {
+                const spinner = showSpinner('⚡ Встановлення фільтрів...\n\nЗачекайте, будь ласка');
+                
+                try {
+                    await applyFilters();
+                    spinner.remove();
+                    showNotification('✅ Фільтри встановлено!\n\nМожете виконати пошук', 'success');
+                } catch (e) {
+                    spinner.remove();
+                    showNotification('❌ Помилка: ' + e.message, 'error');
+                }
+            });
+        }
+
+        // Збереження налаштувань фільтрів при зміні
+        document.getElementById('filter_acr_enable')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_acr_value')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_available_enable')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_limit_enable')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_limit_value')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_period')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_contains_enable')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_blackzone_enable')?.addEventListener('change', saveFilterSettings);
+
+        // Завантаження збережених налаштувань фільтрів
+        const filterSettings = loadFilterSettings();
+        if (filterSettings) {
+            document.getElementById('filter_acr_enable').checked = filterSettings.acr_enable;
+            document.getElementById('filter_acr_value').value = filterSettings.acr_value;
+            document.getElementById('filter_available_enable').checked = filterSettings.available_enable;
+            document.getElementById('filter_limit_enable').checked = filterSettings.limit_enable;
+            document.getElementById('filter_limit_value').value = filterSettings.limit_value;
+            document.getElementById('filter_period').value = filterSettings.period;
+            document.getElementById('filter_contains_enable').checked = filterSettings.contains_enable;
+            document.getElementById('filter_blackzone_enable').checked = filterSettings.blackzone_enable;
+        }
+                        showNotification('❌ Помилка: ' + e.message, 'error');
+                    }
+                } else {
+                    showNotification('❌ Ця функція працює тільки на сторінці Column Manager!\n\nСпочатку натисніть "Перейти"', 'error');
+                }
+            });
+        }
+
         const btnProcess = document.getElementById('btnProcess');
         if (btnProcess) {
             btnProcess.addEventListener('click', () => {
@@ -688,6 +805,149 @@
         }
 
         // БЕЗ автоматичного збереження - юзер сам натисне Save
+    }
+
+    // === ФУНКЦІЯ ВСТАНОВЛЕННЯ ФІЛЬТРІВ ===
+    async function applyFilters() {
+        const settings = loadFilterSettings();
+        
+        const setValue = (el, val, type = 'input') => {
+            if (!el) return;
+            const currentVal = el.type === 'checkbox' ? el.checked : (el.type === 'select-one' ? el.selectedIndex : el.value);
+            if (currentVal === val) return;
+
+            if (el.type === 'checkbox') {
+                el.checked = val;
+            } else if (el.type === 'select-one') {
+                el.selectedIndex = val;
+            } else {
+                el.value = val;
+            }
+
+            el.dispatchEvent(new Event(type, { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+
+        const delay = (ms) => new Promise(res => setTimeout(res, ms));
+        const shuffleArray = (arr) => {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        };
+
+        // ACR
+        if (settings.acr_enable) {
+            const facr = document.getElementById('facr');
+            if (facr) {
+                setValue(facr, settings.acr_value);
+                await delay(200 + Math.random() * 300);
+            }
+        }
+
+        // Limit
+        if (settings.limit_enable) {
+            const flimit = document.getElementById('flimit');
+            if (flimit) {
+                setValue(flimit, parseInt(settings.limit_value), 'change');
+                await delay(200 + Math.random() * 300);
+            }
+        }
+
+        // Available
+        if (settings.available_enable) {
+            const fwhois = document.getElementById('fwhois');
+            if (fwhois) {
+                setValue(fwhois, true, 'click');
+                await delay(200 + Math.random() * 300);
+            }
+        }
+
+        // Період
+        if (settings.period && settings.period !== '') {
+            // Спочатку знімаємо всі періоди
+            const allPeriods = ['flast12', 'flast24', 'flast48', 'flast168', 'flast14d', 'flast30d', 'flast60d', 'flast90d', 'flast120d', 'flast365d'];
+            for (const p of allPeriods) {
+                const el = document.getElementById(p);
+                if (el && el.checked) {
+                    setValue(el, false, 'click');
+                    await delay(100);
+                }
+            }
+            // Встановлюємо потрібний
+            const periodEl = document.getElementById(settings.period);
+            if (periodEl) {
+                setValue(periodEl, true, 'click');
+                await delay(200 + Math.random() * 300);
+            }
+        }
+
+        // Contains (gambling)
+        if (settings.contains_enable) {
+            const fdomain = document.querySelector('input[name="fdomain"]');
+            if (fdomain) {
+                const shuffled = shuffleArray(GAMBLING_WORDS);
+                setValue(fdomain, shuffled.join(' '));
+                await delay(200 + Math.random() * 300);
+            }
+        }
+
+        // Black zones
+        if (settings.blackzone_enable) {
+            const ftldsblock = document.querySelector('input[name="ftldsblock"]');
+            if (ftldsblock) {
+                const shuffled = shuffleArray(BLACK_ZONES);
+                setValue(ftldsblock, shuffled.join(' '));
+            }
+        }
+    }
+
+    // Завантаження налаштувань фільтрів
+    function loadFilterSettings() {
+        const saved = localStorage.getItem('domain-grabber-filters');
+        if (!saved) {
+            return {
+                acr_enable: true,
+                acr_value: '1',
+                available_enable: true,
+                limit_enable: true,
+                limit_value: '4',
+                period: 'flast168',
+                contains_enable: false,
+                blackzone_enable: false
+            };
+        }
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            return {
+                acr_enable: true,
+                acr_value: '1',
+                available_enable: true,
+                limit_enable: true,
+                limit_value: '4',
+                period: 'flast168',
+                contains_enable: false,
+                blackzone_enable: false
+            };
+        }
+    }
+
+    // Збереження налаштувань фільтрів
+    function saveFilterSettings() {
+        const settings = {
+            acr_enable: document.getElementById('filter_acr_enable')?.checked || false,
+            acr_value: document.getElementById('filter_acr_value')?.value || '1',
+            available_enable: document.getElementById('filter_available_enable')?.checked || false,
+            limit_enable: document.getElementById('filter_limit_enable')?.checked || false,
+            limit_value: document.getElementById('filter_limit_value')?.value || '4',
+            period: document.getElementById('filter_period')?.value || '',
+            contains_enable: document.getElementById('filter_contains_enable')?.checked || false,
+            blackzone_enable: document.getElementById('filter_blackzone_enable')?.checked || false
+        };
+        localStorage.setItem('domain-grabber-filters', JSON.stringify(settings));
     }
 
     function processDomains(mode = 'brands') {
