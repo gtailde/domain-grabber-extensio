@@ -365,7 +365,10 @@
 
                 <!-- Metrics Selection -->
                 <div class="section-card">
-                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none;" id="metricsHeader">📊 Метрики:</h3>
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;" id="metricsHeader">
+                        <span id="metrics-toggle" style="transition: transform 0.2s ease;">▼</span>
+                        <span>📊 Метрики:</span>
+                    </h3>
                     <div id="metricsContent" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <div class="metric-checkbox">
                             <input type="checkbox" id="metric_bl" checked>
@@ -392,7 +395,10 @@
 
                 <!-- Filters -->
                 <div class="section-card">
-                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none;" id="filtersHeader">🔍 Фільтри:</h3>
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;" id="filtersHeader">
+                        <span id="filters-toggle" style="transition: transform 0.2s ease;">▼</span>
+                        <span>🔍 Фільтри:</span>
+                    </h3>
                     <div id="filtersContent">
                     <label style="display: flex; align-items: center; cursor: pointer; font-size: 13px; color: #e2e8f0; margin-bottom: 10px; padding: 8px 10px; background: #475569; border-radius: 6px;">
                         <input type="checkbox" id="onlyAvailable" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;"> 
@@ -656,9 +662,14 @@
         // Обробники для згортання Метрик
         const metricsHeader = document.getElementById('metricsHeader');
         const metricsContent = document.getElementById('metricsContent');
+        const metricsToggle = document.getElementById('metrics-toggle');
         const metricsCollapsed = localStorage.getItem('domain-grabber-metrics-collapsed') === 'true';
         if (metricsCollapsed && metricsContent) {
             metricsContent.style.display = 'none';
+            if (metricsToggle) {
+                metricsToggle.style.transform = 'rotate(-90deg)';
+                metricsToggle.textContent = '▶';
+            }
         }
         if (metricsHeader) {
             metricsHeader.addEventListener('click', () => {
@@ -666,6 +677,15 @@
                     const isHidden = metricsContent.style.display === 'none';
                     metricsContent.style.display = isHidden ? 'grid' : 'none';
                     localStorage.setItem('domain-grabber-metrics-collapsed', !isHidden);
+                    if (metricsToggle) {
+                        if (isHidden) {
+                            metricsToggle.style.transform = 'rotate(0deg)';
+                            metricsToggle.textContent = '▼';
+                        } else {
+                            metricsToggle.style.transform = 'rotate(-90deg)';
+                            metricsToggle.textContent = '▶';
+                        }
+                    }
                 }
             });
         }
@@ -673,9 +693,14 @@
         // Обробники для згортання Фільтрів
         const filtersHeader = document.getElementById('filtersHeader');
         const filtersContent = document.getElementById('filtersContent');
+        const filtersToggle = document.getElementById('filters-toggle');
         const filtersCollapsed = localStorage.getItem('domain-grabber-filters-collapsed') === 'true';
         if (filtersCollapsed && filtersContent) {
             filtersContent.style.display = 'none';
+            if (filtersToggle) {
+                filtersToggle.style.transform = 'rotate(-90deg)';
+                filtersToggle.textContent = '▶';
+            }
         }
         if (filtersHeader) {
             filtersHeader.addEventListener('click', () => {
@@ -683,6 +708,15 @@
                     const isHidden = filtersContent.style.display === 'none';
                     filtersContent.style.display = isHidden ? 'block' : 'none';
                     localStorage.setItem('domain-grabber-filters-collapsed', !isHidden);
+                    if (filtersToggle) {
+                        if (isHidden) {
+                            filtersToggle.style.transform = 'rotate(0deg)';
+                            filtersToggle.textContent = '▼';
+                        } else {
+                            filtersToggle.style.transform = 'rotate(-90deg)';
+                            filtersToggle.textContent = '▶';
+                        }
+                    }
                 }
             });
         }
