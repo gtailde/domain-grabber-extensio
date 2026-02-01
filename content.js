@@ -1152,9 +1152,10 @@
         }
 
         // Період
+        const allPeriods = ['flast12', 'flast24', 'flast48', 'flast168', 'flast14d', 'flast30d', 'flast60d', 'flast90d', 'flast120d', 'flast365d'];
+        
         if (settings.period && settings.period !== '') {
             // Спочатку знімаємо всі періоди
-            const allPeriods = ['flast12', 'flast24', 'flast48', 'flast168', 'flast14d', 'flast30d', 'flast60d', 'flast90d', 'flast120d', 'flast365d'];
             for (const p of allPeriods) {
                 const el = document.getElementById(p);
                 if (el && el.checked) {
@@ -1167,6 +1168,15 @@
             if (periodEl) {
                 setValue(periodEl, true, 'click');
                 await delay(50 + Math.random() * 100);
+            }
+        } else {
+            // Якщо період не встановлено - знімаємо всі чекбокси
+            for (const p of allPeriods) {
+                const el = document.getElementById(p);
+                if (el && el.checked) {
+                    setValue(el, false, 'click');
+                    await delay(100);
+                }
             }
         }
 
