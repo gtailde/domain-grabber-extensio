@@ -1072,9 +1072,21 @@
         
         const setValue = (el, val, type = 'input') => {
             if (!el) return;
+            
+            // Перевіряємо поточне значення
             const currentVal = el.type === 'checkbox' ? el.checked : el.value;
-            if (currentVal === val) return;
+            
+            // Порівнюємо з урахуванням типу
+            if (el.type === 'checkbox') {
+                if (currentVal === val) return; // Вже встановлено
+            } else {
+                // Для текстових полів порівнюємо з trim
+                const currentTrimmed = String(currentVal || '').trim();
+                const newTrimmed = String(val || '').trim();
+                if (currentTrimmed === newTrimmed) return; // Вже встановлено
+            }
 
+            // Встановлюємо нове значення
             if (el.type === 'checkbox') {
                 el.checked = val;
             } else {
