@@ -2,7 +2,7 @@
 
 **Професійне розширення для автоматизованого збору доменів та метрик з ExpiredDomains.net**
 
-![Version](https://img.shields.io/badge/version-3.7-blue)
+![Version](https://img.shields.io/badge/version-3.7.2-blue)
 ![Manifest](https://img.shields.io/badge/manifest-v3-green)
 ![Chrome](https://img.shields.io/badge/chrome-extension-yellow)
 
@@ -425,7 +425,7 @@ repalmExtensions/
 - Додано підтримку CF, TF, DP метрик
 - Покращена стабільність
 
-### v3.1 - Лютий 2026
+### v3.1 - Січень 2026
 ✨ **Початковий реліз**:
 - Підтримка обох селекторів: `.field_whois2` та `.field_whois`
 - Автоматичний fallback при відсутності елемента
