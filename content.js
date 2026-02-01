@@ -39,12 +39,6 @@
             showMainUI();
         });
         
-        // Перевіряємо чи панель була відкрита раніше
-        const wasPanelOpen = localStorage.getItem('domain-grabber-panel-open') === 'true';
-        if (wasPanelOpen) {
-            showMainUI();
-        }
-        
         // Hover effect
         launchBtn.addEventListener('mouseenter', () => {
             Object.assign(launchBtn.style, {
