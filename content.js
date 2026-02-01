@@ -276,10 +276,10 @@
 
                 <!-- Auto Filters Section -->
                 <div class="section-card" style="background: #334155; border-color: #475569;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; cursor: pointer;" id="autofilters-header">
-                        <h3 style="margin: 0; font-size: 13px; font-weight: 600; color: #f1f5f9;">🎯 Автозаповнення фільтрів</h3>
-                        <span id="autofilters-toggle" style="font-size: 18px; color: #94a3b8; transition: transform 0.2s;">▼</span>
-                    </div>
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;" id="autofilters-header">
+                        <span id="autofilters-toggle" style="transition: transform 0.2s ease;">▼</span>
+                        <span>🎯 Автозаповнення фільтрів</span>
+                    </h3>
                     
                     <div id="autofilters-content">
                     <!-- Основні фільтри -->
@@ -640,21 +640,27 @@
         const autofiltersCollapsed = localStorage.getItem('domain-grabber-autofilters-collapsed') === 'true';
         if (autofiltersCollapsed) {
             autofiltersContent.style.display = 'none';
-            autofiltersToggle.style.transform = 'rotate(-90deg)';
-            autofiltersToggle.textContent = '▶';
+            if (autofiltersToggle) {
+                autofiltersToggle.style.transform = 'rotate(-90deg)';
+                autofiltersToggle.textContent = '▶';
+            }
         }
         
         autofiltersHeader?.addEventListener('click', () => {
             const isCollapsed = autofiltersContent.style.display === 'none';
             if (isCollapsed) {
                 autofiltersContent.style.display = 'block';
-                autofiltersToggle.style.transform = 'rotate(0deg)';
-                autofiltersToggle.textContent = '▼';
+                if (autofiltersToggle) {
+                    autofiltersToggle.style.transform = 'rotate(0deg)';
+                    autofiltersToggle.textContent = '▼';
+                }
                 localStorage.setItem('domain-grabber-autofilters-collapsed', 'false');
             } else {
                 autofiltersContent.style.display = 'none';
-                autofiltersToggle.style.transform = 'rotate(-90deg)';
-                autofiltersToggle.textContent = '▶';
+                if (autofiltersToggle) {
+                    autofiltersToggle.style.transform = 'rotate(-90deg)';
+                    autofiltersToggle.textContent = '▶';
+                }
                 localStorage.setItem('domain-grabber-autofilters-collapsed', 'true');
             }
         });
