@@ -80,10 +80,30 @@
 
         const ui = document.createElement('div');
         ui.id = 'grabber-ui';
+        
+        // Відновлюємо збережену позицію або використовуємо дефолтну
+        const savedPosition = localStorage.getItem('domain-grabber-position');
+        let positionStyle = {};
+        
+        if (savedPosition) {
+            try {
+                const pos = JSON.parse(savedPosition);
+                positionStyle = {
+                    top: pos.top,
+                    left: pos.left,
+                    right: 'auto'
+                };
+            } catch (e) {
+                // Якщо помилка - використовуємо дефолт
+                positionStyle = { top: '20px', right: '20px' };
+            }
+        } else {
+            positionStyle = { top: '20px', right: '20px' };
+        }
+        
         Object.assign(ui.style, {
-            position: 'fixed', 
-            top: '20px', 
-            right: '20px', 
+            position: 'fixed',
+            ...positionStyle,
             zIndex: '100001', 
             background: '#1e293b',
             padding: '0', 
@@ -91,6 +111,8 @@
             boxShadow: '0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', 
             fontFamily: 'system-ui, -apple-system, sans-serif', 
             width: '600px',
+            maxHeight: 'calc(100vh - 40px)',
+            overflowY: 'auto',
             animation: 'slideInRight 0.3s ease-out',
             cursor: 'move'
         });
@@ -104,6 +126,20 @@
                 @keyframes pulse {
                     0%, 100% { transform: scale(1); }
                     50% { transform: scale(1.05); }
+                }
+                #grabber-ui::-webkit-scrollbar {
+                    width: 8px;
+                }
+                #grabber-ui::-webkit-scrollbar-track {
+                    background: #1e293b;
+                    border-radius: 12px;
+                }
+                #grabber-ui::-webkit-scrollbar-thumb {
+                    background: #475569;
+                    border-radius: 4px;
+                }
+                #grabber-ui::-webkit-scrollbar-thumb:hover {
+                    background: #64748b;
                 }
                 .grabber-content {
                     background: #1e293b;
@@ -886,6 +922,13 @@
             document.onmouseup = null;
             document.onmousemove = null;
             element.style.cursor = 'move';
+            
+            // Зберігаємо позицію в localStorage
+            const position = {
+                top: element.style.top,
+                left: element.style.left
+            };
+            localStorage.setItem('domain-grabber-position', JSON.stringify(position));
         }
     }
 
