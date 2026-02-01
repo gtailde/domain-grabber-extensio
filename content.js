@@ -258,11 +258,11 @@
                         <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
                             <span><input type="checkbox" id="filter_limit_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"> Results Limit</span>
                             <select id="filter_limit_value" style="width: 70px; padding: 4px 6px; border: 1px solid #64748b; border-radius: 4px; font-size: 12px; background: #334155; color: #e2e8f0;">
-                                <option value="25" selected>25</option>
+                                <option value="25">25</option>
                                 <option value="50">50</option>
                                 <option value="75">75</option>
                                 <option value="100">100</option>
-                                <option value="200">200</option>
+                                <option value="200" selected>200</option>
                             </select>
                         </label>
                         <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
@@ -308,12 +308,12 @@
                     </div>
                     
                     <!-- Кнопка застосувати -->
-                    <button id="btnApplyFilters" style="width: 100%; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; margin-top: 6px;">
+                    <button id="btnApplyFilters" style="width: 100%; padding: 12px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; margin-top: 8px;">
                         ⚡ Встановити фільтри
                     </button>
                     
                     <!-- Кнопка скидання налаштувань -->
-                    <button id="btnResetFilters" style="width: 100%; padding: 8px; background: #475569; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 11px; transition: all 0.2s ease; margin-top: 6px;">
+                    <button id="btnResetFilters" style="width: 100%; padding: 10px; background: #475569; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; margin-top: 6px;">
                         🔄 Скинути налаштування
                     </button>
                     </div>
@@ -426,7 +426,7 @@
         makeDraggable(ui);
 
         // Mode switching
-        let currentMode = savedSettings?.mode || 'brands';
+        let currentMode = savedSettings?.mode || 'drop';
         const modeBrands = document.getElementById('modeBrands');
         const modeDrop = document.getElementById('modeDrop');
         const brandsSection = document.getElementById('brandsSection');
@@ -436,6 +436,10 @@
             modeDrop.classList.add('active');
             modeBrands.classList.remove('active');
             brandsSection.style.display = 'none';
+        } else {
+            modeBrands.classList.add('active');
+            modeDrop.classList.remove('active');
+            brandsSection.style.display = 'block';
         }
 
         modeBrands.addEventListener('click', () => {
@@ -759,37 +763,71 @@
     // Функція показу нотифікацій
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
+        notification.className = 'grabber-notification';
         const colors = {
-            success: 'linear-gradient(135deg, #00b894 0%, #00cec9 100%)',
-            error: 'linear-gradient(135deg, #ff7675 0%, #d63031 100%)',
-            info: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            success: '#10b981',
+            error: '#ef4444',
+            info: '#3b82f6'
+        };
+        
+        const icons = {
+            success: '✅',
+            error: '❌',
+            info: 'ℹ️'
         };
         
         Object.assign(notification.style, {
             position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            bottom: '20px',
+            left: '20px',
             zIndex: '100003',
             background: colors[type] || colors.info,
             color: 'white',
-            padding: '30px 40px',
-            borderRadius: '20px',
-            fontSize: '16px',
+            padding: '16px 20px',
+            borderRadius: '12px',
+            fontSize: '14px',
             fontWeight: '600',
-            textAlign: 'center',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
             whiteSpace: 'pre-line',
-            lineHeight: '1.6',
-            maxWidth: '500px'
+            lineHeight: '1.4',
+            maxWidth: '400px',
+            animation: 'slideInLeft 0.3s ease-out',
+            cursor: 'pointer'
         });
         
-        notification.innerHTML = message + '<br><br><button style="margin-top: 15px; padding: 10px 30px; background: rgba(255,255,255,0.9); color: #2d3748; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px;">OK</button>';
+        notification.innerHTML = `<span style="font-size: 18px; margin-right: 10px;">${icons[type] || icons.info}</span>${message}`;
         document.body.appendChild(notification);
         
-        notification.querySelector('button').addEventListener('click', () => {
-            notification.remove();
+        // Додаємо анімацію slideInLeft якщо її ще немає
+        if (!document.getElementById('notification-animation-style')) {
+            const style = document.createElement('style');
+            style.id = 'notification-animation-style';
+            style.textContent = `
+                @keyframes slideInLeft {
+                    from { transform: translateX(-100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutLeft {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(-100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Клік для закриття
+        notification.addEventListener('click', () => {
+            notification.style.animation = 'slideOutLeft 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
         });
+        
+        // Автоматичне закриття через 4 секунди
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                notification.style.animation = 'slideOutLeft 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 4000);
         
         return notification;
     }
@@ -1018,12 +1056,12 @@
                 acr_value: '1',
                 available_enable: true,
                 limit_enable: true,
-                limit_value: '25',
+                limit_value: '200',
                 exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
                 contains_list: GAMBLING_WORDS.join(' '),
-                blackzone_enable: false,
+                blackzone_enable: true,
                 blackzone_list: BLACK_ZONES.join(' ')
             };
         }
@@ -1039,12 +1077,12 @@
                 acr_value: '1',
                 available_enable: true,
                 limit_enable: true,
-                limit_value: '25',
+                limit_value: '200',
                 exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
                 contains_list: GAMBLING_WORDS.join(' '),
-                blackzone_enable: false,
+                blackzone_enable: true,
                 blackzone_list: BLACK_ZONES.join(' ')
             };
         }
@@ -1057,7 +1095,7 @@
             acr_value: document.getElementById('filter_acr_value')?.value || '1',
             available_enable: document.getElementById('filter_available_enable')?.checked || false,
             limit_enable: document.getElementById('filter_limit_enable')?.checked || false,
-            limit_value: document.getElementById('filter_limit_value')?.value || '25',
+            limit_value: document.getElementById('filter_limit_value')?.value || '200',
             exclude_makeoffer_enable: document.getElementById('filter_exclude_makeoffer_enable')?.checked || false,
             period: document.getElementById('filter_period')?.value || '',
             contains_enable: document.getElementById('filter_contains_enable')?.checked || false,
