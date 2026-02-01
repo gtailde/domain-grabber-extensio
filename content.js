@@ -575,13 +575,6 @@
             document.getElementById('filter_contains_enable').checked = filterSettings.contains_enable;
             document.getElementById('filter_blackzone_enable').checked = filterSettings.blackzone_enable;
         }
-                        showNotification('❌ Помилка: ' + e.message, 'error');
-                    }
-                } else {
-                    showNotification('❌ Ця функція працює тільки на сторінці Column Manager!\n\nСпочатку натисніть "Перейти"', 'error');
-                }
-            });
-        }
 
         const btnProcess = document.getElementById('btnProcess');
         if (btnProcess) {
