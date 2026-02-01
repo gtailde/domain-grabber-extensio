@@ -752,23 +752,11 @@
         document.getElementById('filter_limit_value')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_exclude_makeoffer_enable')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_period')?.addEventListener('change', saveFilterSettings);
-        // Обробники для Contains - очищення при відключенні
-        document.getElementById('filter_contains_enable')?.addEventListener('change', function() {
-            if (!this.checked) {
-                const containsList = document.getElementById('filter_contains_list');
-                if (containsList) containsList.value = '';
-            }
-            saveFilterSettings();
-        });
+        // Обробники для Contains - НЕ очищаємо поле, тільки зберігаємо стан
+        document.getElementById('filter_contains_enable')?.addEventListener('change', saveFilterSettings);
         
-        // Обробники для Block TLDs - очищення при відключенні
-        document.getElementById('filter_blackzone_enable')?.addEventListener('change', function() {
-            if (!this.checked) {
-                const blackzoneList = document.getElementById('filter_blackzone_list');
-                if (blackzoneList) blackzoneList.value = '';
-            }
-            saveFilterSettings();
-        });
+        // Обробники для Block TLDs - НЕ очищаємо поле, тільки зберігаємо стан
+        document.getElementById('filter_blackzone_enable')?.addEventListener('change', saveFilterSettings);
         
         // Збереження з debounce для текстових полів
         let filterListTimeout;
@@ -796,9 +784,13 @@
             document.getElementById('filter_exclude_makeoffer_enable').checked = filterSettings.exclude_makeoffer_enable;
             document.getElementById('filter_period').value = filterSettings.period;
             document.getElementById('filter_contains_enable').checked = filterSettings.contains_enable;
-            document.getElementById('filter_contains_list').value = filterSettings.contains_list;
+            // Відновлюємо дефолтні значення якщо список порожній
+            const containsList = filterSettings.contains_list || GAMBLING_WORDS.join(' ');
+            document.getElementById('filter_contains_list').value = containsList;
             document.getElementById('filter_blackzone_enable').checked = filterSettings.blackzone_enable;
-            document.getElementById('filter_blackzone_list').value = filterSettings.blackzone_list;
+            // Відновлюємо дефолтні значення якщо список порожній
+            const blackzoneList = filterSettings.blackzone_list || BLACK_ZONES.join(' ');
+            document.getElementById('filter_blackzone_list').value = blackzoneList;
             
             // Оновлюємо лічильники
             updateFilterCounts();
