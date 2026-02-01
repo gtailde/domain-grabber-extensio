@@ -784,13 +784,9 @@
             document.getElementById('filter_exclude_makeoffer_enable').checked = filterSettings.exclude_makeoffer_enable;
             document.getElementById('filter_period').value = filterSettings.period;
             document.getElementById('filter_contains_enable').checked = filterSettings.contains_enable;
-            // Відновлюємо дефолтні значення якщо список порожній
-            const containsList = filterSettings.contains_list || GAMBLING_WORDS.join(' ');
-            document.getElementById('filter_contains_list').value = containsList;
+            document.getElementById('filter_contains_list').value = filterSettings.contains_list;
             document.getElementById('filter_blackzone_enable').checked = filterSettings.blackzone_enable;
-            // Відновлюємо дефолтні значення якщо список порожній
-            const blackzoneList = filterSettings.blackzone_list || BLACK_ZONES.join(' ');
-            document.getElementById('filter_blackzone_list').value = blackzoneList;
+            document.getElementById('filter_blackzone_list').value = filterSettings.blackzone_list;
             
             // Оновлюємо лічильники
             updateFilterCounts();
