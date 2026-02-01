@@ -945,13 +945,11 @@
         
         const setValue = (el, val, type = 'input') => {
             if (!el) return;
-            const currentVal = el.type === 'checkbox' ? el.checked : (el.type === 'select-one' ? el.selectedIndex : el.value);
+            const currentVal = el.type === 'checkbox' ? el.checked : el.value;
             if (currentVal === val) return;
 
             if (el.type === 'checkbox') {
                 el.checked = val;
-            } else if (el.type === 'select-one') {
-                el.selectedIndex = val;
             } else {
                 el.value = val;
             }
