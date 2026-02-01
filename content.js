@@ -365,8 +365,8 @@
 
                 <!-- Metrics Selection -->
                 <div class="section-card">
-                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">📊 Метрики:</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none;" id="metricsHeader">📊 Метрики:</h3>
+                    <div id="metricsContent" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <div class="metric-checkbox">
                             <input type="checkbox" id="metric_bl" checked>
                             <label for="metric_bl">BL</label>
@@ -392,7 +392,8 @@
 
                 <!-- Filters -->
                 <div class="section-card">
-                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9;">🔍 Фільтри:</h3>
+                    <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #f1f5f9; cursor: pointer; user-select: none;" id="filtersHeader">🔍 Фільтри:</h3>
+                    <div id="filtersContent">
                     <label style="display: flex; align-items: center; cursor: pointer; font-size: 13px; color: #e2e8f0; margin-bottom: 10px; padding: 8px 10px; background: #475569; border-radius: 6px;">
                         <input type="checkbox" id="onlyAvailable" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;"> 
                         <span style="font-weight: 500;">✅ Тільки Available</span>
@@ -403,6 +404,7 @@
                             <span style="font-weight: 500;">📅 Рік >=</span>
                         </label>
                         <input type="number" id="yearValue" value="2020" style="width: 70px; padding: 6px 10px; border: 1px solid #64748b; border-radius: 6px; font-size: 13px; font-weight: 600; text-align: center; background: #334155; color: #e2e8f0;">
+                    </div>
                     </div>
                 </div>
 
@@ -651,6 +653,40 @@
             }
         });
 
+        // Обробники для згортання Метрик
+        const metricsHeader = document.getElementById('metricsHeader');
+        const metricsContent = document.getElementById('metricsContent');
+        const metricsCollapsed = localStorage.getItem('domain-grabber-metrics-collapsed') === 'true';
+        if (metricsCollapsed && metricsContent) {
+            metricsContent.style.display = 'none';
+        }
+        if (metricsHeader) {
+            metricsHeader.addEventListener('click', () => {
+                if (metricsContent) {
+                    const isHidden = metricsContent.style.display === 'none';
+                    metricsContent.style.display = isHidden ? 'grid' : 'none';
+                    localStorage.setItem('domain-grabber-metrics-collapsed', !isHidden);
+                }
+            });
+        }
+        
+        // Обробники для згортання Фільтрів
+        const filtersHeader = document.getElementById('filtersHeader');
+        const filtersContent = document.getElementById('filtersContent');
+        const filtersCollapsed = localStorage.getItem('domain-grabber-filters-collapsed') === 'true';
+        if (filtersCollapsed && filtersContent) {
+            filtersContent.style.display = 'none';
+        }
+        if (filtersHeader) {
+            filtersHeader.addEventListener('click', () => {
+                if (filtersContent) {
+                    const isHidden = filtersContent.style.display === 'none';
+                    filtersContent.style.display = isHidden ? 'block' : 'none';
+                    localStorage.setItem('domain-grabber-filters-collapsed', !isHidden);
+                }
+            });
+        }
+
         // КНОПКА ВСТАНОВИТИ ФІЛЬТРИ
         const btnApplyFilters = document.getElementById('btnApplyFilters');
         if (btnApplyFilters) {
@@ -676,8 +712,23 @@
         document.getElementById('filter_limit_value')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_exclude_makeoffer_enable')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_period')?.addEventListener('change', saveFilterSettings);
-        document.getElementById('filter_contains_enable')?.addEventListener('change', saveFilterSettings);
-        document.getElementById('filter_blackzone_enable')?.addEventListener('change', saveFilterSettings);
+        // Обробники для Contains - очищення при відключенні
+        document.getElementById('filter_contains_enable')?.addEventListener('change', function() {
+            if (!this.checked) {
+                const containsList = document.getElementById('filter_contains_list');
+                if (containsList) containsList.value = '';
+            }
+            saveFilterSettings();
+        });
+        
+        // Обробники для Block TLDs - очищення при відключенні
+        document.getElementById('filter_blackzone_enable')?.addEventListener('change', function() {
+            if (!this.checked) {
+                const blackzoneList = document.getElementById('filter_blackzone_list');
+                if (blackzoneList) blackzoneList.value = '';
+            }
+            saveFilterSettings();
+        });
         
         // Збереження з debounce для текстових полів
         let filterListTimeout;
