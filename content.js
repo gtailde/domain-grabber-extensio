@@ -90,7 +90,7 @@
             borderRadius: '12px',
             boxShadow: '0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', 
             fontFamily: 'system-ui, -apple-system, sans-serif', 
-            width: '520px',
+            width: '600px',
             animation: 'slideInRight 0.3s ease-out',
             cursor: 'move'
         });
@@ -254,12 +254,16 @@
                         <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
                             <span><input type="checkbox" id="filter_limit_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"> Results Limit</span>
                             <select id="filter_limit_value" style="width: 70px; padding: 4px 6px; border: 1px solid #64748b; border-radius: 4px; font-size: 12px; background: #334155; color: #e2e8f0;">
-                                <option value="0">1</option>
-                                <option value="1">2</option>
-                                <option value="2">3</option>
-                                <option value="3">4</option>
-                                <option value="4" selected>5</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                                <option value="200" selected>200</option>
                             </select>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px; padding: 6px 8px; background: #475569; border-radius: 4px;">
+                            <input type="checkbox" id="filter_exclude_makeoffer_enable" checked style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
+                            <span>🚫 Exclude Make Offer</span>
                         </label>
                     </div>
                     
@@ -285,16 +289,18 @@
                     <div style="margin-bottom: 10px;">
                         <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px;">
                             <input type="checkbox" id="filter_contains_enable" style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
-                            <span style="font-weight: 600;">🎰 Contains (gambling)</span>
+                            <span style="font-weight: 600;">🎰 Contains (<span id="gambling_count">26</span>)</span>
                         </label>
+                        <textarea id="filter_contains_list" placeholder="coin bet gambl game win..." style="width: 100%; height: 60px; border: 1px solid #64748b; border-radius: 4px; padding: 6px; font-size: 11px; font-family: monospace; background: #475569; color: #e2e8f0; resize: vertical; box-sizing: border-box;"></textarea>
                     </div>
                     
                     <!-- Black zones -->
                     <div style="margin-bottom: 10px;">
                         <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; color: #e2e8f0; margin-bottom: 6px;">
                             <input type="checkbox" id="filter_blackzone_enable" style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;">
-                            <span style="font-weight: 600;">🚫 Block TLDs (${BLACK_ZONES.length})</span>
+                            <span style="font-weight: 600;">🚫 Block TLDs (<span id="blackzone_count">629</span>)</span>
                         </label>
+                        <textarea id="filter_blackzone_list" placeholder="faith auspost pink sanofi..." style="width: 100%; height: 60px; border: 1px solid #64748b; border-radius: 4px; padding: 6px; font-size: 11px; font-family: monospace; background: #475569; color: #e2e8f0; resize: vertical; box-sizing: border-box;"></textarea>
                     </div>
                     
                     <!-- Кнопка застосувати -->
@@ -545,7 +551,7 @@
                 try {
                     await applyFilters();
                     spinner.remove();
-                    showNotification('✅ Фільтри встановлено!\n\nМожете виконати пошук', 'success');
+                    showNotification('✅ Фільтри встановлено!\n\nТепер можете застосувати фільтра на сайті', 'success');
                 } catch (e) {
                     spinner.remove();
                     showNotification('❌ Помилка: ' + e.message, 'error');
@@ -559,9 +565,25 @@
         document.getElementById('filter_available_enable')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_limit_enable')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_limit_value')?.addEventListener('change', saveFilterSettings);
+        document.getElementById('filter_exclude_makeoffer_enable')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_period')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_contains_enable')?.addEventListener('change', saveFilterSettings);
         document.getElementById('filter_blackzone_enable')?.addEventListener('change', saveFilterSettings);
+        
+        // Збереження з debounce для текстових полів
+        let filterListTimeout;
+        document.getElementById('filter_contains_list')?.addEventListener('input', () => {
+            clearTimeout(filterListTimeout);
+            filterListTimeout = setTimeout(() => {
+                saveFilterSettings();
+            }, 500);
+        });
+        document.getElementById('filter_blackzone_list')?.addEventListener('input', () => {
+            clearTimeout(filterListTimeout);
+            filterListTimeout = setTimeout(() => {
+                saveFilterSettings();
+            }, 500);
+        });
 
         // Завантаження збережених налаштувань фільтрів
         const filterSettings = loadFilterSettings();
@@ -571,9 +593,15 @@
             document.getElementById('filter_available_enable').checked = filterSettings.available_enable;
             document.getElementById('filter_limit_enable').checked = filterSettings.limit_enable;
             document.getElementById('filter_limit_value').value = filterSettings.limit_value;
+            document.getElementById('filter_exclude_makeoffer_enable').checked = filterSettings.exclude_makeoffer_enable;
             document.getElementById('filter_period').value = filterSettings.period;
             document.getElementById('filter_contains_enable').checked = filterSettings.contains_enable;
+            document.getElementById('filter_contains_list').value = filterSettings.contains_list;
             document.getElementById('filter_blackzone_enable').checked = filterSettings.blackzone_enable;
+            document.getElementById('filter_blackzone_list').value = filterSettings.blackzone_list;
+            
+            // Оновлюємо лічильники
+            updateFilterCounts();
         }
 
         const btnProcess = document.getElementById('btnProcess');
@@ -836,7 +864,7 @@
             const facr = document.getElementById('facr');
             if (facr) {
                 setValue(facr, settings.acr_value);
-                await delay(200 + Math.random() * 300);
+                await delay(50 + Math.random() * 100);
             }
         }
 
@@ -844,8 +872,8 @@
         if (settings.limit_enable) {
             const flimit = document.getElementById('flimit');
             if (flimit) {
-                setValue(flimit, parseInt(settings.limit_value), 'change');
-                await delay(200 + Math.random() * 300);
+                setValue(flimit, settings.limit_value);
+                await delay(50 + Math.random() * 100);
             }
         }
 
@@ -854,7 +882,16 @@
             const fwhois = document.getElementById('fwhois');
             if (fwhois) {
                 setValue(fwhois, true, 'click');
-                await delay(200 + Math.random() * 300);
+                await delay(50 + Math.random() * 100);
+            }
+        }
+
+        // Exclude Make Offer
+        if (settings.exclude_makeoffer_enable) {
+            const fexclude = document.getElementById('fexcludemakeoffer');
+            if (fexclude) {
+                setValue(fexclude, true, 'click');
+                await delay(50 + Math.random() * 100);
             }
         }
 
@@ -873,25 +910,27 @@
             const periodEl = document.getElementById(settings.period);
             if (periodEl) {
                 setValue(periodEl, true, 'click');
-                await delay(200 + Math.random() * 300);
+                await delay(50 + Math.random() * 100);
             }
         }
 
         // Contains (gambling)
-        if (settings.contains_enable) {
+        if (settings.contains_enable && settings.contains_list) {
             const fdomain = document.querySelector('input[name="fdomain"]');
             if (fdomain) {
-                const shuffled = shuffleArray(GAMBLING_WORDS);
+                const words = settings.contains_list.split(/[\s\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
+                const shuffled = shuffleArray(words);
                 setValue(fdomain, shuffled.join(' '));
-                await delay(200 + Math.random() * 300);
+                await delay(50 + Math.random() * 100);
             }
         }
 
         // Black zones
-        if (settings.blackzone_enable) {
+        if (settings.blackzone_enable && settings.blackzone_list) {
             const ftldsblock = document.querySelector('input[name="ftldsblock"]');
             if (ftldsblock) {
-                const shuffled = shuffleArray(BLACK_ZONES);
+                const zones = settings.blackzone_list.split(/[\s\n,]+/).map(z => z.trim()).filter(z => z.length > 0);
+                const shuffled = shuffleArray(zones);
                 setValue(ftldsblock, shuffled.join(' '));
             }
         }
@@ -906,24 +945,34 @@
                 acr_value: '1',
                 available_enable: true,
                 limit_enable: true,
-                limit_value: '4',
+                limit_value: '200',
+                exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
-                blackzone_enable: false
+                contains_list: GAMBLING_WORDS.join(' '),
+                blackzone_enable: false,
+                blackzone_list: BLACK_ZONES.join(' ')
             };
         }
         try {
-            return JSON.parse(saved);
+            const settings = JSON.parse(saved);
+            // Якщо списки порожні, заповнюємо дефолтними
+            if (!settings.contains_list) settings.contains_list = GAMBLING_WORDS.join(' ');
+            if (!settings.blackzone_list) settings.blackzone_list = BLACK_ZONES.join(' ');
+            return settings;
         } catch (e) {
             return {
                 acr_enable: true,
                 acr_value: '1',
                 available_enable: true,
                 limit_enable: true,
-                limit_value: '4',
+                limit_value: '200',
+                exclude_makeoffer_enable: true,
                 period: 'flast168',
                 contains_enable: false,
-                blackzone_enable: false
+                contains_list: GAMBLING_WORDS.join(' '),
+                blackzone_enable: false,
+                blackzone_list: BLACK_ZONES.join(' ')
             };
         }
     }
@@ -935,12 +984,33 @@
             acr_value: document.getElementById('filter_acr_value')?.value || '1',
             available_enable: document.getElementById('filter_available_enable')?.checked || false,
             limit_enable: document.getElementById('filter_limit_enable')?.checked || false,
-            limit_value: document.getElementById('filter_limit_value')?.value || '4',
+            limit_value: document.getElementById('filter_limit_value')?.value || '200',
+            exclude_makeoffer_enable: document.getElementById('filter_exclude_makeoffer_enable')?.checked || false,
             period: document.getElementById('filter_period')?.value || '',
             contains_enable: document.getElementById('filter_contains_enable')?.checked || false,
-            blackzone_enable: document.getElementById('filter_blackzone_enable')?.checked || false
+            contains_list: document.getElementById('filter_contains_list')?.value || '',
+            blackzone_enable: document.getElementById('filter_blackzone_enable')?.checked || false,
+            blackzone_list: document.getElementById('filter_blackzone_list')?.value || ''
         };
         localStorage.setItem('domain-grabber-filters', JSON.stringify(settings));
+        
+        // Оновлюємо лічильники
+        updateFilterCounts();
+    }
+
+    // Оновлення лічильників слів
+    function updateFilterCounts() {
+        const gamblingList = document.getElementById('filter_contains_list')?.value || '';
+        const blackzoneList = document.getElementById('filter_blackzone_list')?.value || '';
+        
+        const gamblingCount = gamblingList.split(/[\s\n,]+/).filter(w => w.trim().length > 0).length;
+        const blackzoneCount = blackzoneList.split(/[\s\n,]+/).filter(w => w.trim().length > 0).length;
+        
+        const gamblingCountEl = document.getElementById('gambling_count');
+        const blackzoneCountEl = document.getElementById('blackzone_count');
+        
+        if (gamblingCountEl) gamblingCountEl.textContent = gamblingCount;
+        if (blackzoneCountEl) blackzoneCountEl.textContent = blackzoneCount;
     }
 
     function processDomains(mode = 'brands') {
