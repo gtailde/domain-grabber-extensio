@@ -55,9 +55,11 @@ cd domain-grabber-extensio
   - **DROP** - всі домени з міткою brand="DROP"
 
 - **📊 Налаштування метрик:**
-  - ABY (Age BY), ACR (Age CR), BL (Backlinks)
-  - DP (Domains Power), RD (Referring Domains)
-  - FB (Facebook Shares), TF (TrustFlow), CF (CitationFlow)
+  - BL (Backlinks)
+  - ACR (Archive.org Cached Results)
+  - CF (Citation Flow)
+  - TF (Trust Flow)
+  - DP (Domain Pop)
 
 - **🔍 Фільтри:**
   - Available Only - тільки доступні домени
@@ -82,7 +84,7 @@ cd domain-grabber-extensio
 1. Відкрийте [ExpiredDomains.net](https://www.expireddomains.net/deleted-domains/)
 2. Натисніть **🚀 Grab**
 3. Оберіть режим: **BRANDS** або **DROP**
-4. Виберіть метрики (наприклад ABY, ACR, BL)
+4. Виберіть метрики (наприклад BL, ACR, CF)
 5. Встановіть фільтри:
    - ☑️ Available Only
    - ☑️ Year >= 2000
@@ -98,9 +100,9 @@ cd domain-grabber-extensio
 ### Формат JSONL (приклад)
 
 ```json
-{"domain": "example.com", "year": "2005", "ABY": "25", "ACR": "100", "brand": "example"}
-{"domain": "test.com", "year": "2010", "ABY": "30", "ACR": "150", "brand": "DROP"}
-{"domain": "demo.net", "year": "2015", "ABY": "20", "ACR": "80", "brand": "demo"}
+{"domain": "example.com", "bl": "25", "acr": "100", "cf": "15", "tf": "20", "dp": "10", "brand": "example"}
+{"domain": "test.com", "bl": "30", "acr": "150", "cf": "18", "tf": "25", "dp": "12", "brand": "DROP"}
+{"domain": "demo.net", "bl": "20", "acr": "80", "cf": "12", "tf": "15", "dp": "8", "brand": "demo"}
 ```
 
 ### Режим BRANDS
@@ -200,7 +202,6 @@ MIT License - використовуйте вільно для особисти�
 ## 🆘 Підтримка
 
 - 🐛 Issues: [GitHub Issues](https://github.com/gtailde/domain-grabber-extensio/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/gtailde/domain-grabber-extensio/discussions)
 
 ---
 
